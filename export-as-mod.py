@@ -7,11 +7,12 @@ import urllib.parse
 
 sevenzipexec = 'C:' + os.sep + 'Program Files' + os.sep + '7-Zip' + os.sep + '7z.exe'
 acpath = 'D:' + os.sep + 'Program Files (x86)' + os.sep + 'Steam' + os.sep + 'steamapps' + os.sep + 'common' + os.sep + 'assettocorsa'
-trackToProcess = ''
+trackToProcess = 'shuto_revival_project_beta'
 trackModsDestDir = 'D:\\Dropbox\\Assetto Mods\\Tracks'
 createAcServerMetatadaFile = True
 acServerDownloadUrlPrefix="http://37.187.124.217/dP1dG9mT5uV0eE0jI6hM7qF0rK2aK9bT/ac-mods/"
 includeAcServerMetatadaFileInArchive=False
+overrideExistingArchives=False
 
 def createTrackMetaData(trackDir, archiveName):
 	metadataFilePath = trackDir + os.sep + "ui" + os.sep + "meta_data.json"
@@ -35,9 +36,13 @@ def zipFileToDir(workingDirectory, archiveFile, listfilename):
 	try:
 		os.chdir(workingDirectory) 
 		if os.path.isfile(archiveFile):
-			print("Removing old archive file " + archiveFile)
-			os.remove(archiveFile)
-		archiveCmd = sevenzipexec + " a " + archiveFile + " -spf @" + listfilename
+			if overrideExistingArchives:
+				print("Removing old archive file " + archiveFile)
+				os.remove(archiveFile)
+			else:
+				print("archive file " + archiveFile + " already exists. Skipping")
+				return
+		archiveCmd = sevenzipexec + ' a "' + archiveFile + '" -spf @' + listfilename
 		if not includeAcServerMetatadaFileInArchive:
 			archiveCmd = archiveCmd + " -xr!meta_data.json"
 		print('executing ' + archiveCmd)
@@ -50,6 +55,12 @@ def zipFileToDir(workingDirectory, archiveFile, listfilename):
 def cleanName(name):
 	remove_punctuation_map = dict((ord(char), None) for char in '\/*?:"<>|')
 	return name.translate(remove_punctuation_map)
+
+def parseJson(jsonfilename):
+	try:
+		return json.loads(open(jsonfilename).read())
+	except:
+		return json.loads(open(jsonfilename, encoding='utf-8').read())
 
 def packTrack(track):
 	print('generating mod for track ' + track)
@@ -64,9 +75,19 @@ def packTrack(track):
 	track_ui_json = trackPath + os.sep +'ui' + os.sep + 'ui_track.json'
 	
 	try:
-		jsonFile = json.loads(open(track_ui_json).read())
-	except:
-		print("Cannot parse ui_track.json for track " + track)
+		if os.path.isfile(track_ui_json):
+			jsonFile = parseJson(track_ui_json)
+		else:
+			layouts = os.listdir(trackPath + os.sep +'ui')
+			if len(layouts) == 0:
+				print("Cannot find ui_track.json for track " + track)
+				return
+			track_ui_json = trackPath + os.sep +'ui' + os.sep + layouts[0] + os.sep +'ui_track.json'
+			jsonFile = parseJson(track_ui_json)
+
+	except Exception as e:
+		print("Cannot parse " + track_ui_json + ": ")
+		print(e)
 		return
 	trackVersion = jsonFile['version']
 	trackAuthor = jsonFile['author']
@@ -87,10 +108,13 @@ def packTrack(track):
 	extensionFoncigTrackFile =  'extension' + os.sep + 'config' + os.sep + 'tracks' + os.sep + track + '.ini'
 	if os.path.isfile(acpath + os.sep + extensionFoncigTrackFile):
 		listfile.write(extensionFoncigTrackFile + '\n')
+	extensionFoncigTrackFileBlm =  'extension' + os.sep + 'config' + os.sep + 'tracks' + os.sep + track + '.ini.blm'
+	if os.path.isfile(acpath + os.sep + extensionFoncigTrackFileBlm):
+		listfile.write(extensionFoncigTrackFileBlm + '\n')
 	listfile.close()
 
 	# zip the track
-	archiveFile = '"' + trackModsDestDir + os.sep + trackVersionName + '.7z"'
+	archiveFile = trackModsDestDir + os.sep + trackVersionName + '.7z'
 	zipFileToDir(acpath, archiveFile, listfilename)
 	os.remove(listfilename)
 	if createAcServerMetatadaFile:
