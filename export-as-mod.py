@@ -7,10 +7,10 @@ import urllib.parse
 
 sevenzipexec = 'C:' + os.sep + 'Program Files' + os.sep + '7-Zip' + os.sep + '7z.exe'
 acpath = 'D:' + os.sep + 'Program Files (x86)' + os.sep + 'Steam' + os.sep + 'steamapps' + os.sep + 'common' + os.sep + 'assettocorsa'
-trackToProcess = 'shuto_revival_project_beta'
+trackToProcess = ''
 trackModsDestDir = 'D:\\Dropbox\\Assetto Mods\\Tracks'
 createAcServerMetatadaFile = True
-acServerDownloadUrlPrefix="http://37.187.124.217/dP1dG9mT5uV0eE0jI6hM7qF0rK2aK9bT/ac-mods/"
+acServerTracksDownloadUrlPrefix="http://cheztheo.net/l/tracks/"
 includeAcServerMetatadaFileInArchive=False
 overrideExistingArchives=False
 
@@ -21,9 +21,10 @@ def createTrackMetaData(trackDir, archiveName):
 	else:
 		metadatafile = open(metadataFilePath, "x")
 	metadatafile.write('{\n')
-	metadatafile.write('"downloadURL": "' + acServerDownloadUrlPrefix + urllib.parse.quote(archiveName) + '",\n')
-	metadatafile.write('"notes": "",\n')
+	metadatafile.write('"downloadURL": "' + acServerTracksDownloadUrlPrefix + urllib.parse.quote(archiveName) + '.7z",\n')
+	metadatafile.write('"notes": ""\n')
 	metadatafile.write('}\n')
+
 def checkEnv():
 	if not os.path.isfile(sevenzipexec):
 		sys.exit("Cannot find 7zip executable. Exiting") 
@@ -108,6 +109,10 @@ def packTrack(track):
 	extensionFoncigTrackFile =  'extension' + os.sep + 'config' + os.sep + 'tracks' + os.sep + track + '.ini'
 	if os.path.isfile(acpath + os.sep + extensionFoncigTrackFile):
 		listfile.write(extensionFoncigTrackFile + '\n')
+	# extension config file
+	extensionFoncigTrackFileLoaded =  'extension' + os.sep + 'config' + os.sep + 'tracks' + os.sep + 'loaded' + os.sep + track + '.ini'
+	if os.path.isfile(acpath + os.sep + extensionFoncigTrackFileLoaded):
+		listfile.write(extensionFoncigTrackFileLoaded + '\n')
 	extensionFoncigTrackFileBlm =  'extension' + os.sep + 'config' + os.sep + 'tracks' + os.sep + track + '.ini.blm'
 	if os.path.isfile(acpath + os.sep + extensionFoncigTrackFileBlm):
 		listfile.write(extensionFoncigTrackFileBlm + '\n')
