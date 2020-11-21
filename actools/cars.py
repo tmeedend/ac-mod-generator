@@ -12,6 +12,12 @@ class CarTools(mods.ModTools):
     def kunosMods(self):
         return {"ks_abarth_595ss"}
     
+    def destination(self, params):
+        return params.carsDestination
+
+    def modDownloadUrlPrefix(self, params):
+        return params.carDownloadUrlPrefix
+
     def modFiles(self):
         return [
         # mod main folder

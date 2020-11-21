@@ -14,10 +14,10 @@ from actools import params
 def processMod(paramsToUse, modTool, modsToProcess):
 	if modsToProcess != None and modsToProcess.strip() != "":
 		if modsToProcess == "#all":
-			modTool.packAllMods(paramsToUse.modsDestDir, paramsToUse.createAcServerMetatadaFile, paramsToUse.overrideExistingArchives, paramsToUse.downloadUrlPrefix, paramsToUse.acpath)
+			modTool.packAllMods(paramsToUse, paramsToUse.acpath)
 		else:
 			for mod in modsToProcess.split(","):
-				modTool.packMod(mod, paramsToUse.modsDestDir, paramsToUse.createAcServerMetatadaFile, paramsToUse.overrideExistingArchives, paramsToUse.downloadUrlPrefix, paramsToUse.acpath)
+				modTool.packMod(mod, paramsToUse, paramsToUse.acpath)
 	
 
 paramsToUse = params.Params()

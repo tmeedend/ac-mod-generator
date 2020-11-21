@@ -2,6 +2,8 @@
 import json
 import subprocess
 import os
+import glob 
+import time
 
 def cleanName(name):
 	remove_punctuation_map = dict((ord(char), None) for char in '\/*?:"<>|')
@@ -13,7 +15,12 @@ def parseJson(jsonfilename):
 	except:
 		return json.loads(open(jsonfilename, encoding='utf-8').read())
 
-
+def getNewestFile(modPath):
+	list_of_files = glob.glob(modPath + '/**', recursive=True) 
+	latest_file = max(list_of_files, key=os.path.getmtime)
+	print('latest file is ' + latest_file + " date: %s" % time.ctime(os.path.getctime(latest_file)))
+	return os.path.getctime(latest_file)
+	
 def zipFileToDir(sevenzipexec, workingDirectory, archiveFile, listfilename, override, excludeArgs):
 	origWD = os.getcwd() # remember our original working directory
 	try:

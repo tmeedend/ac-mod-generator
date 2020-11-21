@@ -1,6 +1,8 @@
 import tempfile
 import os
+import time
 from actools import common
+from actools import params
 import urllib.parse
 from abc import ABC
 
@@ -17,8 +19,13 @@ class ModTools(ABC):
     def modFiles(self, modId):
         pass
 
-    def kunosMods(self):
+    def isKunosMod(self, mod):
         pass
+
+    def destination(self, params):
+        pass
+    def modDownloadUrlPrefix(self, params):
+        pass  
 
     def createMetaDataFile(self, modDir, archiveName, urlPrefix, dir ):
         metadataFilePath = modDir + os.sep + "ui" + os.sep + "meta_data.json"
@@ -32,7 +39,7 @@ class ModTools(ABC):
         metadatafile.write('}\n')
 
 
-    def packMod(self, mod, destination, createAcServerMetatadaFile, overrideArchive, urlPrefix, dir):
+    def packMod(self, mod, params, dir):
         print('generating mod for mod ' + mod)
         workdir = tempfile.mkdtemp()
         modspath = dir + os.sep + 'content' + os.sep + self.modType() + 's'
@@ -57,8 +64,8 @@ class ModTools(ABC):
             print("Cannot parse " + mod_ui_json + ": ")
             print(e)
             return
-        modVersion = jsonFile['version']
-        modAuthor = jsonFile['author']
+        modVersion = jsonFile['version'] if 'version' in jsonFile else None
+        modAuthor = jsonFile['author'] if 'author' in jsonFile else None
         modVersionName = mod
         if not modVersion == None:
             modVersionName += " " + modVersion
@@ -70,6 +77,21 @@ class ModTools(ABC):
         # create structure
         # os.makedirs(workdir + '/' + modVersionName + '/content/tracks/')
 
+        archiveFile = self.destination(params) + os.sep + modVersionName + '.7z'
+        override=False
+        if(params.forceOverride):
+            override = True
+        elif params.overrideArchives:
+            if os.path.isfile(archiveFile):
+                archiveDate = os.path.getctime(archiveFile)
+                modNewestDate = common.getNewestFile(modPath)
+                if( modNewestDate > archiveDate):
+                    override = True
+                    print("mod date is newer than archive date which is %s" % time.ctime(archiveDate))
+                else:
+                    print("Skipping archive override because mod date is older than archive date which is %s" % time.ctime(archiveDate))
+
+
         listfile = open(listfilename, "x")
 
         for fileToZip in self.modFiles(mod):
@@ -78,21 +100,19 @@ class ModTools(ABC):
         listfile.close()
 
         # zip the mod
-        archiveFile = destination + os.sep + modVersionName + '.7z'
         if not self.includeAcServerMetatadaFileInArchive:
-            common.zipFileToDir(self.sevenzipexec, dir, archiveFile, listfilename, overrideArchive, "meta_data.json")
+            common.zipFileToDir(self.sevenzipexec, dir, archiveFile, listfilename, override, "meta_data.json")
         else:
-            common.zipFileToDir(self.sevenzipexec, dir, archiveFile, listfilename, overrideArchive, None)
+            common.zipFileToDir(self.sevenzipexec, dir, archiveFile, listfilename, override, None)
         os.remove(listfilename)
-        if createAcServerMetatadaFile:
-           self.createMetaDataFile(modPath, modVersionName, urlPrefix, dir)
+        if params.createAcServerMetatadaFile:
+           self.createMetaDataFile(modPath, modVersionName, self.modDownloadUrlPrefix(params), dir)
 
-    def packAllMods(self, destination, createAcServerMetatadaFile, overrideArchive, urlPrefix, dir):
-        kunosMods = self.kunosMods() 
+    def packAllMods(self, params, dir):
         modspath = dir + os.sep + 'content' + os.sep + self.modType() + 's'
         mods = os.listdir(modspath)
         for mod in mods:
-            if not mod in kunosMods:
-                self.packMod(mod, destination, createAcServerMetatadaFile, overrideArchive, urlPrefix, dir)
+            if not self.isKunosMod(mod):
+                self.packMod(mod, params, dir)
 
 
