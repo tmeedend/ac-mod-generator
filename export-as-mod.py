@@ -3,141 +3,103 @@ import subprocess
 import sys
 import tempfile
 import json
-import urllib.parse
+import argparse
+from actools import common
 
-sevenzipexec = 'C:' + os.sep + 'Program Files' + os.sep + '7-Zip' + os.sep + '7z.exe'
-acpath = 'D:' + os.sep + 'Program Files (x86)' + os.sep + 'Steam' + os.sep + 'steamapps' + os.sep + 'common' + os.sep + 'assettocorsa'
-trackToProcess = ''
-trackModsDestDir = 'D:\\Dropbox\\Assetto Mods\\Tracks'
-createAcServerMetatadaFile = True
-acServerTracksDownloadUrlPrefix="http://cheztheo.net/l/tracks/"
-includeAcServerMetatadaFileInArchive=False
+from actools import tracks
+from actools import cars
+
+sevenzipexec = None
+acpath = None
+
+tracksToProcess = None
+carsToProcess = None
+archiveToProcess = None
+modsDestDir = None
+createAcServerMetatadaFile = False
+downloadUrlPrefix=None
 overrideExistingArchives=False
 
-def createTrackMetaData(trackDir, archiveName):
-	metadataFilePath = trackDir + os.sep + "ui" + os.sep + "meta_data.json"
-	if os.path.isfile(metadataFilePath):
-		metadatafile = open(metadataFilePath, "w")
-	else:
-		metadatafile = open(metadataFilePath, "x")
-	metadatafile.write('{\n')
-	metadatafile.write('"downloadURL": "' + acServerTracksDownloadUrlPrefix + urllib.parse.quote(archiveName) + '.7z",\n')
-	metadatafile.write('"notes": ""\n')
-	metadatafile.write('}\n')
+def readMandatoryConfigField(configJsonFile, field):
+	value = configJsonFile[field]
+	if value == None or value == '':
+		sys.exit("Cannot read field " + field + " from actools config file")
+	return value
 
 def checkEnv():
+	global acpath
+	global sevenzipexec
+	try:
+		configJsonFile = common.parseJson('actools-config.json')
+	except Exception as e:
+		print(e)
+		sys.exit("Cannot read actools config file. Exiting") 
+	sevenzipexec = readMandatoryConfigField(configJsonFile, '7zipexec').replace("/", os.sep)
+	acpath = readMandatoryConfigField(configJsonFile, 'assetto-corsa-install-folder').replace("/", os.sep)
+	
 	if not os.path.isfile(sevenzipexec):
 		sys.exit("Cannot find 7zip executable. Exiting") 
 	if not os.path.isdir(acpath):
-		sys.exit("Cannot find Assetto Corsa executable. Exiting") 
+		sys.exit("Cannot find Assetto Corsa install folder. Exiting") 
 
+	argsparser = argparse.ArgumentParser(description='Build/clean Assetto Corsa mods from mods archives or folders')
+	argsparser.add_argument('-g','--gen-metadata-file', help='Generate the meta_data.json needed for acServer', required=False)
+	argsparser.add_argument('-o','--override-existing-archive', help='If an archive already exists in the destination folder, it will be overriden', required=False)
+	argsparser.add_argument('-u','--url-prefix', help='The URL prefix to write into the acServer meta_data.json file, for the url field', required=False)
+	argsparser.add_argument('-d','--destination', help='If specified, the generated archives will be generated here instead of the current dir', required=False)
+	argsparser.add_argument('-t','--tracks', help='The name of the tracks to archive from the assetto corsa install dir. If the value is #all, it will archive all the tracks.', required=False)
+	argsparser.add_argument('-c','--cars', help='The name of the tracks to archive from the assetto corsa install dir. If the value is #all, it will archive all the cars.', required=False)
+	argsparser.add_argument('-a','--archive', help='The path to a mod archive to transform to a good mod structure that can be enabled/disabled by Content Manager', required=False)
+	args = vars(argsparser.parse_args())
 
-def zipFileToDir(workingDirectory, archiveFile, listfilename):
-	origWD = os.getcwd() # remember our original working directory
-	try:
-		os.chdir(workingDirectory) 
-		if os.path.isfile(archiveFile):
-			if overrideExistingArchives:
-				print("Removing old archive file " + archiveFile)
-				os.remove(archiveFile)
-			else:
-				print("archive file " + archiveFile + " already exists. Skipping")
-				return
-		archiveCmd = sevenzipexec + ' a "' + archiveFile + '" -spf @' + listfilename
-		if not includeAcServerMetatadaFileInArchive:
-			archiveCmd = archiveCmd + " -xr!meta_data.json"
-		print('executing ' + archiveCmd)
-		subprocess.Popen(archiveCmd).communicate()
-	except:
-		print("Error while archiving mod") 
-	finally:
-		os.chdir(origWD) # get back to our original working directory 
-		
-def cleanName(name):
-	remove_punctuation_map = dict((ord(char), None) for char in '\/*?:"<>|')
-	return name.translate(remove_punctuation_map)
+	global createAcServerMetatadaFile
+	global overrideExistingArchives
+	global downloadUrlPrefix
+	global modsDestDir
+	global tracksToProcess
+	global carsToProcess
+	global archiveToProcess
 
-def parseJson(jsonfilename):
-	try:
-		return json.loads(open(jsonfilename).read())
-	except:
-		return json.loads(open(jsonfilename, encoding='utf-8').read())
-
-def packTrack(track):
-	print('generating mod for track ' + track)
-	workdir = tempfile.mkdtemp()
-	trackspath = acpath + os.sep + 'content' + os.sep + 'tracks'
-	listfilename = workdir + os.sep + track + ".txt"
-	listfile = open(listfilename, "x")
-	listfile.write('content' + os.sep + 'tracks' + os.sep + track + '\n')
-
-	# read version
-	trackPath = trackspath + os.sep + track
-	track_ui_json = trackPath + os.sep +'ui' + os.sep + 'ui_track.json'
+	if 'gen-metadata-file' in args:
+		createAcServerMetatadaFile = True
+	if 'override-existing-archive' in args:
+		overrideExistingArchives = True
+	if 'url-prefix' in args:
+		downloadUrlPrefix = args['url-prefix']
+	if 'destination' in args:
+		modsDestDir = args['destination']
+	if 'tracks' in args:
+		tracksToProcess = args['tracks']
+	if 'cars' in args:
+		carsToProcess = args['cars']
+	if 'archive' in args:
+		archiveToProcess = args['archive']
 	
-	try:
-		if os.path.isfile(track_ui_json):
-			jsonFile = parseJson(track_ui_json)
+
+	if modsDestDir == None or modsDestDir == "":
+		modsDestDir = os.getcwd
+
+def processTracks():
+	global acpath
+	global modsDestDir
+	if tracksToProcess != None and tracksToProcess.strip() != "":
+		trackModTool = tracks.TrackTools(acpath, sevenzipexec)
+		if tracksToProcess == "#all":
+			trackModTool.packAllMods(modsDestDir, createAcServerMetatadaFile, overrideExistingArchives, downloadUrlPrefix, acpath)
 		else:
-			layouts = os.listdir(trackPath + os.sep +'ui')
-			if len(layouts) == 0:
-				print("Cannot find ui_track.json for track " + track)
-				return
-			track_ui_json = trackPath + os.sep +'ui' + os.sep + layouts[0] + os.sep +'ui_track.json'
-			jsonFile = parseJson(track_ui_json)
+			for track in tracksToProcess.split(","):
+				trackModTool.packMod(track, modsDestDir, createAcServerMetatadaFile, overrideExistingArchives, downloadUrlPrefix, acpath)
 
-	except Exception as e:
-		print("Cannot parse " + track_ui_json + ": ")
-		print(e)
-		return
-	trackVersion = jsonFile['version']
-	trackAuthor = jsonFile['author']
-	trackVersionName = track
-	if not trackVersion == None:
-		trackVersionName += " " + trackVersion
-	if not trackAuthor == None:
-		trackVersionName += " by " + trackAuthor
-	trackVersionName = cleanName(trackVersionName)
-	print("archive name is " + trackVersionName)
+def processCars():
+	global acpath
+	global modsDestDir
+	if carsToProcess != None and carsToProcess.strip() != "":
+		carModTool = cars.CarTools(acpath, sevenzipexec)
+		if tracksToProcess == "#all":
+			carModTool.packAllMods(modsDestDir, createAcServerMetatadaFile, overrideExistingArchives, downloadUrlPrefix, acpath)
+		else:
+			for car in carsToProcess.split(","):
+				carModTool.packMod(car, modsDestDir, createAcServerMetatadaFile, overrideExistingArchives, downloadUrlPrefix, acpath)
 
-
-	# create structure
-	# os.makedirs(workdir + '/' + trackVersionName + '/content/tracks/')
-	# os.symlink(trackspath + '/' + track, workdir + '/' + trackVersionName + '/content/tracks/' + track)
-
-	# extension config file
-	extensionFoncigTrackFile =  'extension' + os.sep + 'config' + os.sep + 'tracks' + os.sep + track + '.ini'
-	if os.path.isfile(acpath + os.sep + extensionFoncigTrackFile):
-		listfile.write(extensionFoncigTrackFile + '\n')
-	# extension config file
-	extensionFoncigTrackFileLoaded =  'extension' + os.sep + 'config' + os.sep + 'tracks' + os.sep + 'loaded' + os.sep + track + '.ini'
-	if os.path.isfile(acpath + os.sep + extensionFoncigTrackFileLoaded):
-		listfile.write(extensionFoncigTrackFileLoaded + '\n')
-	extensionFoncigTrackFileBlm =  'extension' + os.sep + 'config' + os.sep + 'tracks' + os.sep + track + '.ini.blm'
-	if os.path.isfile(acpath + os.sep + extensionFoncigTrackFileBlm):
-		listfile.write(extensionFoncigTrackFileBlm + '\n')
-	listfile.close()
-
-	# zip the track
-	archiveFile = trackModsDestDir + os.sep + trackVersionName + '.7z'
-	zipFileToDir(acpath, archiveFile, listfilename)
-	os.remove(listfilename)
-	if createAcServerMetatadaFile:
-		createTrackMetaData(trackPath, trackVersionName)
-
-def packAllTracks():
-	kunosTracks = {"ks_barcelona", "ks_black_cat_county", "ks_brands_hatch", "ks_drag", "ks_highlands", "ks_laguna_seca", "ks_monza66", "ks_nordschleife", "ks_nurburgring", "ks_red_bull_ring", "ks_silverstone", "ks_silverstone1967", "ks_vallelunga", "ks_zandvoort", "magione", "monza", "mugello", "spa", "trento-bondone", "drift", "imola"}
-	trackspath = acpath + os.sep + 'content' + os.sep + 'tracks'
-	tracks = os.listdir(trackspath)
-	for track in tracks:
-		if not track in kunosTracks:
-			packTrack(track)
-
-def main():
-	checkEnv()
-	if trackToProcess is None or trackToProcess == "":
-		packAllTracks()
-	else:
-		packTrack(trackToProcess)
-
-main()
+checkEnv()
+processTracks()
