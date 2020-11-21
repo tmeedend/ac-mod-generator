@@ -28,3 +28,7 @@ processMod(paramsToUse, cars.CarTools(paramsToUse.acpath, paramsToUse.sevenzipex
 # verifier les / a la fin des chemins et les enlever si besoin
 # modFiles : vérifier dans cette méthode si les fichiers existent
 # chemins mis en paramètre : vérifier qu'ils existent
+# shaders spéciaaux cf shutoko
+# crew dans skin.ini
+# rss formula  rss2 v6 : textures et driver, cm_texture.lua il y a des fonts dedans
+# ext_config.ini
