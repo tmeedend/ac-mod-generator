@@ -20,7 +20,7 @@ class TrackTools(mods.ModTools):
     def modDownloadUrlPrefix(self, params):
         return params.trackDownloadUrlPrefix
         
-    def modFiles(self, modId):
+    def modFiles(self, modId, acpath):
         return [
         # mod main folder
         'content' + os.sep + self.modType() + 's' + os.sep + modId,

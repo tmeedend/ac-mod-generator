@@ -20,7 +20,11 @@ def getNewestFile(modPath):
 	latest_file = max(list_of_files, key=os.path.getmtime)
 	print('latest file is ' + latest_file + " date: %s" % time.ctime(os.path.getctime(latest_file)))
 	return os.path.getctime(latest_file)
-	
+
+def unzipFileToDir(sevenzipexec, archiveFile, destination):
+	archiveCmd = sevenzipexec + ' e ' + archiveFile + ' -o "' + destination + '"'
+	subprocess.Popen(archiveCmd).communicate()
+
 def zipFileToDir(sevenzipexec, workingDirectory, archiveFile, listfilename, override, excludeArgs):
 	origWD = os.getcwd() # remember our original working directory
 	try:

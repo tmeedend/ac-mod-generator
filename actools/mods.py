@@ -16,7 +16,7 @@ class ModTools(ABC):
     def modType(self): 
         pass
 
-    def modFiles(self, modId):
+    def modFiles(self, modId, acpath):
         pass
 
     def isKunosMod(self, mod):
@@ -94,7 +94,7 @@ class ModTools(ABC):
 
         listfile = open(listfilename, "x")
 
-        for fileToZip in self.modFiles(mod):
+        for fileToZip in self.modFiles(mod, dir):
             if os.path.isfile(dir + os.sep + fileToZip) or os.path.isdir(dir + os.sep + fileToZip):
                 listfile.write(fileToZip + '\n')    
         listfile.close()

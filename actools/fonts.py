@@ -19,12 +19,13 @@ def getFilesForFonts(acpath, fontname):
         fontFiles.append(pngFileName)
     if os.path.isfile(acpath + os.sep + txtFileName ):
         fontFiles.append(txtFileName)
+    print('found fonts ' + fontFiles.__str__ )
     return fontFiles
     
-def findFonts(acPath, modPath):
+def find(acPath, carModId):
     config = ConfigParser()
     fontFiles = []
-    digitalInstrumentsPath = "D:/Program Files (x86)/Steam/SteamApps/common/assettocorsa/content/cars/wtcr_peugeot_308_gti/data/digital_instruments.ini"
+    digitalInstrumentsPath = acPath + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'data' + os.sep + 'digital_instruments.ini'
     if os.path.isfile(digitalInstrumentsPath):
         config.read(digitalInstrumentsPath)
         i = 1

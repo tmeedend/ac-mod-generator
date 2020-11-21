@@ -24,3 +24,7 @@ paramsToUse = params.Params()
 paramsToUse.checkEnv()
 processMod(paramsToUse, tracks.TrackTools(paramsToUse.acpath, paramsToUse.sevenzipexec), paramsToUse.tracksToProcess)
 processMod(paramsToUse, cars.CarTools(paramsToUse.acpath, paramsToUse.sevenzipexec), paramsToUse.carsToProcess)
+
+# verifier les / a la fin des chemins et les enlever si besoin
+# modFiles : vérifier dans cette méthode si les fichiers existent
+# chemins mis en paramètre : vérifier qu'ils existent

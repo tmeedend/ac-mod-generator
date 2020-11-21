@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args":["--tracks", "#all", "--tracks_destination", "D:/Games/ac-mods/Tracks", "--override_archives", "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/"]
+            "args":["--cars", "#all", "--cars_destination", "C:/Users/Theo/Downloads/acmods", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/"]
         }
     ]
 }

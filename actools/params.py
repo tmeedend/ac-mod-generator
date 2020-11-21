@@ -29,6 +29,21 @@ class Params:
 			sys.exit("Cannot read field " + field + " from actools config file")
 		return value
 
+	def argValueOrNone(self, args, argName):
+		if argName in args and not args[argName] == None:
+			return args[argName]
+		return None
+
+	def argPathOrNone(self, args, argName):
+		value = self.argValueOrNone(args, argName)
+		if not value == None:
+			return value.replace("/", os.sep)
+		return None
+
+	def argValueOrFalse(self, args, argName):
+		if argName in args and args[argName]:
+			return True
+		return False
 
 	def checkEnv(self):
 		try:
@@ -57,26 +72,17 @@ class Params:
 		argsparser.add_argument('-a','--archive', help='The path to a mod archive to transform to a good mod structure that can be enabled/disabled by Content Manager', required=False)
 		args = vars(argsparser.parse_args())
 
-		if 'gen_metadata_file' in args and args['gen_metadata_file']:
-			self.createAcServerMetatadaFile = True
-		if 'force_override' in args and args['force_override']:
-			self.forceOverride = True
-		if 'override_archives' in args and args['override_archives']:
-			self.overrideArchives = True
-		if 'track_url_prefix' in args:
-			self.trackDownloadUrlPrefix = args['track_url_prefix']
-		if 'car_url_prefix' in args:
-			self.carDownloadUrlPrefix = args['car_url_prefix']
-		if 'tracks_destination' in args:
-			self.tracksDestination = args['tracks_destination'].replace("/", os.sep)
-		if 'cars_destination' in args:
-			self.carsDestination = args['cars_destination'].replace("/", os.sep)
-		if 'tracks' in args:
-			self.tracksToProcess = args['tracks']
-		if 'cars' in args:
-			self.carsToProcess = args['cars']
-		if 'archive' in args:
-			self.archiveToProcess = args['archive']
+		self.createAcServerMetatadaFile = self.argValueOrFalse(args, 'gen_metadata_file')
+		self.forceOverride = self.argValueOrFalse(args, 'force_override')
+		self.overrideArchives = self.argValueOrFalse(args, 'override_archives')
+		self.trackDownloadUrlPrefix = self.argValueOrNone(args, 'track_url_prefix')
+		self.carDownloadUrlPrefix = self.argValueOrNone(args, 'car_url_prefix')
+		self.tracksDestination = self.argPathOrNone(args, 'tracks_destination')
+		self.carsDestination = self.argPathOrNone(args, 'cars_destination')
+		self.tracksToProcess = self.argValueOrNone(args, 'tracks')
+		self.carsToProcess = self.argValueOrNone(args, 'cars')
+		self.archiveToProcess = self.argValueOrNone(args, 'archive')
+
 		
 
 		if self.tracksDestination == None or self.tracksDestination == "":

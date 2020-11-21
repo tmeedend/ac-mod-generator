@@ -2,6 +2,8 @@ import tempfile
 import os
 from actools import common
 from actools import mods
+from actools import fonts
+
 from urllib.parse import urlparse
 
 class CarTools(mods.ModTools):
@@ -18,13 +20,15 @@ class CarTools(mods.ModTools):
     def modDownloadUrlPrefix(self, params):
         return params.carDownloadUrlPrefix
 
-    def modFiles(self):
-        return [
+    def modFiles(self, modId, acpath):
+        filesArray = [
         # mod main folder
-        'content' + os.sep + self.modType() + 's' + os.sep + mod,
+        'content' + os.sep + self.modType() + 's' + os.sep + modId,
         # extension config file
-        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + mod + '.ini',
+        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + modId + '.ini',
         # extension config file
-        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + 'loaded' + os.sep + mod + '.ini',
-        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + mod + '.ini.blm'
+        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + 'loaded' + os.sep + modId + '.ini',
+        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + modId + '.ini.blm'
         ]
+        filesArray.extend(fonts.find(acpath, modId))
+        return filesArray
