@@ -14,7 +14,7 @@ class ModTools(ABC):
     def modType(self): 
         pass
 
-    def modFiles(self):
+    def modFiles(self, modId):
         pass
 
     def kunosMods(self):
@@ -72,7 +72,7 @@ class ModTools(ABC):
 
         listfile = open(listfilename, "x")
 
-        for fileToZip in self.modFiles():
+        for fileToZip in self.modFiles(mod):
             if os.path.isfile(dir + os.sep + fileToZip) or os.path.isdir(dir + os.sep + fileToZip):
                 listfile.write(fileToZip + '\n')    
         listfile.close()
@@ -87,9 +87,6 @@ class ModTools(ABC):
         if createAcServerMetatadaFile:
            self.createMetaDataFile(modPath, modVersionName, urlPrefix, dir)
 
-
-
-
     def packAllMods(self, destination, createAcServerMetatadaFile, overrideArchive, urlPrefix, dir):
         kunosMods = self.kunosMods() 
         modspath = dir + os.sep + 'content' + os.sep + self.modType() + 's'
@@ -97,3 +94,5 @@ class ModTools(ABC):
         for mod in mods:
             if not mod in kunosMods:
                 self.packMod(mod, destination, createAcServerMetatadaFile, overrideArchive, urlPrefix, dir)
+
+
