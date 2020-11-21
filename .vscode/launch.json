@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args":["--tracks", "#all", "--tracks_destination", "D:/Games/ac-mods/Tracks", "--cars_destination", "D:/Games/ac-mods/Cars", 
+            "args":["--cars", "rss_formula_hybrid_2020", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
                 "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
                 "--update_mod_url", "--force_override"]
         }

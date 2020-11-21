@@ -14,20 +14,22 @@ def getFilesForDriver(acpath, drivername):
     return driverFiles
 
 
-def findDriverInSection(config, section, driversFiles):
+def findDriverInSection(config, section, driversFiles, acPath, driversFound):
     if config.has_section(section):
                 if config.has_option(section, 'NAME'):
                     driverName = config.get(section, 'NAME')
-                    if not isKunosDriver(driverName):
+                    if not isKunosDriver(driverName) and not driverName in driversFound:
                         print("found driver " + driverName)
+                        driversFound.add(driverName)
                         driversFiles.extend(getFilesForDriver(acPath, driverName))
 
 def find(acPath, carModId):
     driversFiles = []
+    driversFound = set() 
     drivers3dPath = acPath + os.sep + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'data' + os.sep + 'driver3d.ini'
     if os.path.isfile(drivers3dPath):
         config = common.readIniFile(drivers3dPath)
-        findDriverInSection("MODEL", config, driversFiles)
+        findDriverInSection(config, "MODEL", driversFiles, acPath, driversFound)
     skinsPath = acPath + os.sep + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'skins'
     if os.path.isdir(skinsPath):
         for skin in os.listdir(skinsPath):
@@ -36,5 +38,5 @@ def find(acPath, carModId):
                 extConfig = skinPath + os.sep + 'ext_config.ini'
                 if os.path.isfile(extConfig):
                     config = common.readIniFile(extConfig)
-                    findDriverInSection("DRIVER3D_MODEL", config, driversFiles)
+                    findDriverInSection(config, "DRIVER3D_MODEL", driversFiles, acPath, driversFound)
     return driversFiles

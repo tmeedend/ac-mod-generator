@@ -45,7 +45,6 @@ class ModTools(ABC):
             if os.path.isfile(mod_ui_json):
                 jsonFile = common.parseJson(mod_ui_json)
             else:
-                layouts = os.listdir(modPath + os.sep +'ui')
                 for layout in os.listdir(modPath + os.sep +'ui'):
                     if os.path.isdir(os.path.join(modPath + os.sep +'ui',layout)):
                         mod_ui_json = modPath + os.sep +'ui' + os.sep + layout + os.sep +'ui_' + self.modType() + '.json'
