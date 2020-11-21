@@ -68,9 +68,9 @@ class Params:
 		if 'car_url_prefix' in args:
 			self.carDownloadUrlPrefix = args['car_url_prefix']
 		if 'tracks_destination' in args:
-			self.tracksDestination = args['tracks_destination']
+			self.tracksDestination = args['tracks_destination'].replace("/", os.sep)
 		if 'cars_destination' in args:
-			self.carsDestination = args['cars_destination']
+			self.carsDestination = args['cars_destination'].replace("/", os.sep)
 		if 'tracks' in args:
 			self.tracksToProcess = args['tracks']
 		if 'cars' in args:

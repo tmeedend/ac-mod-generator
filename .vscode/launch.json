@@ -1,0 +1,16 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python : Fichier actuel",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args":["--tracks", "#all", "--tracks_destination", "D:/Games/ac-mods/Tracks", "--override_archives", "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/"]
+        }
+    ]
+}
