@@ -9,10 +9,10 @@ This tool recreates an assetto corsa mod from a track folder or a car folder
 * Configure "actools-config.json" with your environment
 
 # example to generate a car mod
-'C:\Python39\python.exe' export-as-mod.py' '--cars' 'ac_legends_gt40_mk4' '--cars_destination' 'D:/Games/ac-mods/cars'
+C:\Python39\python.exe export-as-mod.py --cars ac_legends_gt40_mk4 --cars_destination D:/Games/ac-mods/cars
 
 # example to generate a track mod
-'C:\Python39\python.exe' export-as-mod.py' '--tracks' 'estoril1988' '--tracks_destination' 'D:/Games/ac-mods/tracks' 
+C:\Python39\python.exe export-as-mod.py --tracks estoril1988 --tracks_destination D:/Games/ac-mods/tracks
 
 # example to generate a mod from a downloaded mod archive
 TODO
