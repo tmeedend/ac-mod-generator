@@ -17,7 +17,7 @@ class Params:
 	archiveToProcess = None
 	tracksDestination = None
 	carsDestination = None
-	createAcServerMetatadaFile = False
+	updateModUrlForAcServer = False
 	carDownloadUrlPrefix=""
 	trackDownloadUrlPrefix=""
 	overrideArchives=False
@@ -60,7 +60,7 @@ class Params:
 			sys.exit("Cannot find Assetto Corsa install folder. Exiting") 
 
 		argsparser = argparse.ArgumentParser(description='Build/clean Assetto Corsa mods from mods archives or folders')
-		argsparser.add_argument('-g','--gen_metadata_file', action='store_true', help='Generate the meta_data.json needed for acServer', required=False)
+		argsparser.add_argument('-g','--update_mod_url', action='store_true', help='Generate the meta_data.json needed for acServer or update ui_car.json', required=False)
 		argsparser.add_argument('-f','--force_override', action='store_true', help='If an archive already exists in the destination folder, it will be overriden, no matter the dates', required=False)
 		argsparser.add_argument('-o','--override_archives', action='store_true', help='If an archive already exists in the destination folder, it will be overriden if the mod has a newer file than the archive to override', required=False)
 		argsparser.add_argument('-tu','--track_url_prefix', help='The URL prefix to write into the acServer meta_data.json file for tracks, for the url field', required=False)
@@ -72,7 +72,7 @@ class Params:
 		argsparser.add_argument('-a','--archive', help='The path to a mod archive to transform to a good mod structure that can be enabled/disabled by Content Manager', required=False)
 		args = vars(argsparser.parse_args())
 
-		self.createAcServerMetatadaFile = self.argValueOrFalse(args, 'gen_metadata_file')
+		self.updateModUrlForAcServer = self.argValueOrFalse(args, 'update_mod_url')
 		self.forceOverride = self.argValueOrFalse(args, 'force_override')
 		self.overrideArchives = self.argValueOrFalse(args, 'override_archives')
 		self.trackDownloadUrlPrefix = self.argValueOrNone(args, 'track_url_prefix')

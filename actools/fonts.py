@@ -15,24 +15,33 @@ def getFilesForFont(acpath, fontname):
     fontFiles = []
     pngFileName = 'content' + os.sep + 'fonts' + os.sep + fontname + '.png' 
     txtFileName = 'content' + os.sep + 'fonts' + os.sep + fontname + '.txt' 
+    ttfFileName = 'content' + os.sep + 'fonts' + os.sep + fontname + '.ttf' 
     if os.path.isfile(acpath + os.sep + pngFileName ):
         fontFiles.append(pngFileName)
+        print("found font file " + pngFileName)
     if os.path.isfile(acpath + os.sep + txtFileName ):
         fontFiles.append(txtFileName)
-    print('found fonts ' + fontFiles.__str__ )
+        print("found font file " + txtFileName)
+    if os.path.isfile(acpath + os.sep + ttfFileName ):
+        fontFiles.append(ttfFileName)
+        print("found font file " + ttfFileName)
     return fontFiles
     
 def find(acPath, carModId):
     config = ConfigParser()
+    fontsFound = set() 
     fontFiles = []
-    digitalInstrumentsPath = acPath + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'data' + os.sep + 'digital_instruments.ini'
+    digitalInstrumentsPath = acPath + os.sep  + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'data' + os.sep + 'digital_instruments.ini'
     if os.path.isfile(digitalInstrumentsPath):
         config.read(digitalInstrumentsPath)
-        i = 1
-        section = "ITEM" + i
+        i = 0
+        section = "ITEM_" + str(i)
         while config.has_section(section):
             if config.has_option(section, 'FONT'):
                 fontName = config.get(section, 'FONT')
-                if not isKunosFont(fontName):
+                if not isKunosFont(fontName) and not fontName in fontsFound:
                     fontFiles.extend(getFilesForFont(acPath, fontName))
+                    fontsFound.add(fontName)
+            i = i + 1
+            section = "ITEM_" + str(i)
     return fontFiles

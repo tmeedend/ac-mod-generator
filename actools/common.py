@@ -4,6 +4,7 @@ import subprocess
 import os
 import glob 
 import time
+from configparser import ConfigParser
 
 def cleanName(name):
 	remove_punctuation_map = dict((ord(char), None) for char in '\/*?:"<>|')
@@ -11,9 +12,9 @@ def cleanName(name):
 
 def parseJson(jsonfilename):
 	try:
-		return json.loads(open(jsonfilename).read())
+		return json.loads(open(jsonfilename, strict=False).read(), strict=False)
 	except:
-		return json.loads(open(jsonfilename, encoding='utf-8').read())
+		return json.loads(open(jsonfilename, encoding='utf-8-sig').read(), strict=False)
 
 def getNewestFile(modPath):
 	list_of_files = glob.glob(modPath + '/**', recursive=True) 
@@ -24,6 +25,16 @@ def getNewestFile(modPath):
 def unzipFileToDir(sevenzipexec, archiveFile, destination):
 	archiveCmd = sevenzipexec + ' e ' + archiveFile + ' -o "' + destination + '"'
 	subprocess.Popen(archiveCmd).communicate()
+
+def readIniFile(iniFile):
+	try:
+		config = ConfigParser()
+		config.read(iniFile)
+		return config
+	except:
+		config = ConfigParser()
+		config.read(iniFile, encoding='utf_8_sig')
+		return config
 
 def zipFileToDir(sevenzipexec, workingDirectory, archiveFile, listfilename, override, excludeArgs):
 	origWD = os.getcwd() # remember our original working directory

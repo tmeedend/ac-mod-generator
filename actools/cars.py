@@ -3,10 +3,18 @@ import os
 from actools import common
 from actools import mods
 from actools import fonts
-
-from urllib.parse import urlparse
+from actools import drivers
+import json
+import urllib.parse
 
 class CarTools(mods.ModTools):
+
+    def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
+        metadataFilePath = modDir + os.sep + "ui" + os.sep + "ui_car.json"
+        jsonData = common.parseJson(metadataFilePath)
+        jsonData["downloadURL"] = urlPrefix + urllib.parse.quote(archiveName) + '.7z'
+        with open(metadataFilePath, "w") as jsonFile:
+            json.dump(jsonData, jsonFile, indent=2)
 
     def modType(self): 
         return "car"
@@ -30,5 +38,6 @@ class CarTools(mods.ModTools):
         'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + 'loaded' + os.sep + modId + '.ini',
         'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + modId + '.ini.blm'
         ]
-        filesArray.extend(fonts.find(acpath, modId))
+        # filesArray.extend(fonts.find(acpath, modId))
+        filesArray.extend(drivers.find(acpath, modId))
         return filesArray

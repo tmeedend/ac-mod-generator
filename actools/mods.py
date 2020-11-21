@@ -27,16 +27,8 @@ class ModTools(ABC):
     def modDownloadUrlPrefix(self, params):
         pass  
 
-    def createMetaDataFile(self, modDir, archiveName, urlPrefix, dir ):
-        metadataFilePath = modDir + os.sep + "ui" + os.sep + "meta_data.json"
-        if os.path.isfile(metadataFilePath):
-            metadatafile = open(metadataFilePath, "w")
-        else:
-            metadatafile = open(metadataFilePath, "x")
-        metadatafile.write('{\n')
-        metadatafile.write('"downloadURL": "' + urlPrefix + urllib.parse.quote(archiveName) + '.7z",\n')
-        metadatafile.write('"notes": ""\n')
-        metadatafile.write('}\n')
+    def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
+        pass
 
 
     def packMod(self, mod, params, dir):
@@ -48,17 +40,22 @@ class ModTools(ABC):
         # read version
         modPath = modspath + os.sep + mod
         mod_ui_json = modPath + os.sep +'ui' + os.sep + 'ui_' + self.modType() + '.json'
-        
+        jsonFile = None
         try:
             if os.path.isfile(mod_ui_json):
                 jsonFile = common.parseJson(mod_ui_json)
             else:
                 layouts = os.listdir(modPath + os.sep +'ui')
-                if len(layouts) == 0:
+                for layout in os.listdir(modPath + os.sep +'ui'):
+                    if os.path.isdir(os.path.join(modPath + os.sep +'ui',layout)):
+                        mod_ui_json = modPath + os.sep +'ui' + os.sep + layout + os.sep +'ui_' + self.modType() + '.json'
+                        if os.path.isfile(mod_ui_json):
+                            jsonFile = common.parseJson(mod_ui_json)
+                if jsonFile == None:
                     print("Cannot find ui_" + self.modType() + ".json for mod " + mod)
                     return
-                mod_ui_json = modPath + os.sep +'ui' + os.sep + layouts[0] + os.sep +'ui_' + self.modType() + '.json'
-                jsonFile = common.parseJson(mod_ui_json)
+                
+                
 
         except Exception as e:
             print("Cannot parse " + mod_ui_json + ": ")
@@ -72,10 +69,9 @@ class ModTools(ABC):
         if not modAuthor == None:
             modVersionName += " by " + modAuthor
         modVersionName = common.cleanName(modVersionName)
-        print("archive name is " + modVersionName)
-
-        # create structure
-        # os.makedirs(workdir + '/' + modVersionName + '/content/tracks/')
+        # update downloadUrl
+        if params.updateModUrlForAcServer:
+           self.updateModUrlForAcServer(modPath, modVersionName, self.modDownloadUrlPrefix(params), dir)
 
         archiveFile = self.destination(params) + os.sep + modVersionName + '.7z'
         override=False
@@ -105,8 +101,6 @@ class ModTools(ABC):
         else:
             common.zipFileToDir(self.sevenzipexec, dir, archiveFile, listfilename, override, None)
         os.remove(listfilename)
-        if params.createAcServerMetatadaFile:
-           self.createMetaDataFile(modPath, modVersionName, self.modDownloadUrlPrefix(params), dir)
 
     def packAllMods(self, params, dir):
         modspath = dir + os.sep + 'content' + os.sep + self.modType() + 's'
