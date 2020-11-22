@@ -9,6 +9,7 @@ from actools import common
 from actools import tracks
 from actools import cars
 from actools import params
+from actools import archives
 
 
 def processMod(paramsToUse, modTool, modsToProcess):
@@ -17,21 +18,18 @@ def processMod(paramsToUse, modTool, modsToProcess):
 			modTool.packAllMods(paramsToUse, paramsToUse.acpath)
 		else:
 			for mod in modsToProcess.split(","):
-				modTool.packMod(mod, paramsToUse, paramsToUse.acpath)
+				modTool.packMod(mod.strip(), paramsToUse, paramsToUse.acpath)
 	
 
 paramsToUse = params.Params()
 paramsToUse.checkEnv()
 processMod(paramsToUse, tracks.TrackTools(paramsToUse.acpath, paramsToUse.sevenzipexec), paramsToUse.tracksToProcess)
 processMod(paramsToUse, cars.CarTools(paramsToUse.acpath, paramsToUse.sevenzipexec), paramsToUse.carsToProcess)
-
+if not paramsToUse.archiveToProcess == None:
+	archives.transformToValidMod(paramsToUse)
 # verifier les / a la fin des chemins et les enlever si besoin
 # modFiles : vérifier dans cette méthode si les fichiers existent
 # chemins mis en paramètre : vérifier qu'ils existent
 # mod a pack  : verifier qu'il existe
 # shaders spéciaaux cf shutoko
-# rss formula  rss2 v6 : textures et driver, cm_texture.lua il y a des fonts dedans
-# ext_config.ini
-# verifier metadata file pour les voitures
-# skin.ini SUIT=\racesimstudio\2020_formula_rss\navy
-# skin.ini HELMET=\racesimstudio\2020_formula_rss\navy
+# rss formula  rss2 v6 : cm_texture.lua il y a des fonts dedans

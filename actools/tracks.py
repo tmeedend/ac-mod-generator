@@ -9,7 +9,7 @@ class TrackTools(mods.ModTools):
     kunosTracks = {"ks_barcelona", "ks_black_cat_county", "ks_brands_hatch", "ks_drag", "ks_highlands", "ks_laguna_seca", "ks_monza66", "ks_nordschleife", "ks_nurburgring", "ks_red_bull_ring", "ks_silverstone", "ks_silverstone1967", "ks_vallelunga", "ks_zandvoort", "magione", "monza", "mugello", "spa", "trento-bondone", "drift", "imola"}
 
     def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
-        metadataFilePath = modDir + os.sep + "ui" + os.sep + "meta_data.json"
+        metadataFilePath = os.path.join(modDir, "ui", "meta_data.json")
         if os.path.isfile(metadataFilePath):
             metadatafile = open(metadataFilePath, "w")
         else:
@@ -34,10 +34,10 @@ class TrackTools(mods.ModTools):
     def modFiles(self, modId, acpath):
         return [
         # mod main folder
-        'content' + os.sep + self.modType() + 's' + os.sep + modId,
+        os.path.join( 'content', self.modType() + 's', modId),
         # extension config file
-        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + modId + '.ini',
+        os.path.join('extension','config', self.modType()  + 's', modId + '.ini'),
         # extension config file
-        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + 'loaded' + os.sep + modId + '.ini',
-        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + modId + '.ini.blm'
+        os.path.join('extension', 'config', self.modType()  + 's', 'loaded', modId + '.ini'),
+        os.path.join('extension', 'config', self.modType()  + 's', modId + '.ini.blm')
         ]

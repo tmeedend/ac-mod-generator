@@ -10,7 +10,7 @@ import urllib.parse
 class CarTools(mods.ModTools):
 
     def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
-        metadataFilePath = modDir + os.sep + "ui" + os.sep + "ui_car.json"
+        metadataFilePath =  os.path.join(modDir, "ui", "ui_car.json")
         jsonData = common.parseJson(metadataFilePath)
         jsonData["downloadURL"] = urlPrefix + urllib.parse.quote(archiveName) + '.7z'
         with open(metadataFilePath, "w") as jsonFile:
@@ -210,12 +210,12 @@ class CarTools(mods.ModTools):
     def modFiles(self, modId, acpath):
         filesArray = [
         # mod main folder
-        'content' + os.sep + self.modType() + 's' + os.sep + modId,
+        os.path.join('content',self.modType() + 's', modId),
         # extension config file
-        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + modId + '.ini',
+         os.path.join('extension', 'config', self.modType()  + 's', modId + '.ini'),
         # extension config file
-        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + 'loaded' + os.sep + modId + '.ini',
-        'extension' + os.sep + 'config' + os.sep + self.modType()  + 's' + os.sep + modId + '.ini.blm'
+         os.path.join('extension', 'config', self.modType()  + 's', 'loaded', modId + '.ini'),
+         os.path.join('extension', 'config', self.modType()  + 's', modId + '.ini.blm')
         ]
         # filesArray.extend(fonts.find(acpath, modId))
         filesArray.extend(drivers.find(acpath, modId))

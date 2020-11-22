@@ -28,11 +28,11 @@ def unzipFileToDir(sevenzipexec, archiveFile, destination):
 
 def readIniFile(iniFile):
 	try:
-		config = ConfigParser()
+		config = ConfigParser(strict=False)
 		config.read(iniFile)
 		return config
 	except:
-		config = ConfigParser()
+		config = ConfigParser(strict=False)
 		config.read(iniFile, encoding='utf_8_sig')
 		return config
 
@@ -47,7 +47,10 @@ def zipFileToDir(sevenzipexec, workingDirectory, archiveFile, listfilename, over
 			else:
 				print("archive file " + archiveFile + " already exists. Skipping")
 				return
-		archiveCmd = sevenzipexec + ' a "' + archiveFile + '" -spf @' + listfilename
+		if listfilename == None:
+			archiveCmd = sevenzipexec + ' a "' + archiveFile + '" *'
+		else: 
+			archiveCmd = sevenzipexec + ' a "' + archiveFile + '" -spf @' + listfilename
 		if not excludeArgs  == None:
 			archiveCmd = archiveCmd + " -xr!" + excludeArgs
 		print('executing ' + archiveCmd)

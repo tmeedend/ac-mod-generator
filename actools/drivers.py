@@ -19,8 +19,8 @@ def isKunosCrew(crewName, crewType):
 
 def getFilesForDriver(acpath, drivername):
     driverFiles = []
-    kn5filename = 'content' + os.sep + 'driver' + os.sep + drivername + '.kn5' 
-    if os.path.isfile(acpath + os.sep + kn5filename ):
+    kn5filename =  os.path.join('content', 'driver', drivername + '.kn5')
+    if os.path.isfile(os.path.join(acpath, kn5filename)):
         driverFiles.append(kn5filename)
     print('found driver file ' + kn5filename + " for driver " + drivername)
     return driverFiles
@@ -28,8 +28,8 @@ def getFilesForDriver(acpath, drivername):
 
 def getFilesForCrew(acPath, crewType, crewName):
     crewFiles = []
-    crewDir = 'content' + os.sep + 'texture' + os.sep + 'crew_' + crewType.lower() + crewName + os.sep
-    if os.path.isdir(acPath + os.sep + crewDir):
+    crewDir =  os.path.join('content', 'texture', 'crew_' + crewType.lower() + crewName, "")
+    if os.path.isdir(os.path.join(acPath, crewDir)):
         crewFiles.append(crewDir )
     print('found crew dir ' + crewDir )
     return crewFiles
@@ -44,7 +44,7 @@ def findDriverInSection(config, section, driversFiles, acPath, driversFound):
                         driversFiles.extend(getFilesForDriver(acPath, driverName))
 
 def findCrewFiles(skinPath, crewType, driversFiles, acPath, crewsFound):
-    skinConfig = skinPath + os.sep + 'skin.ini'
+    skinConfig =  os.path.join(skinPath, 'skin.ini')
     if os.path.isfile(skinConfig):
         config = common.readIniFile(skinConfig)
         section = 'CREW'
@@ -61,16 +61,16 @@ def find(acPath, carModId):
     helmetsFound = set() 
     suitsFound = set() 
     brandFound = set() 
-    drivers3dPath = acPath + os.sep + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'data' + os.sep + 'driver3d.ini'
+    drivers3dPath = os.path.join(acPath, 'content', 'cars', carModId, 'data', 'driver3d.ini')
     if os.path.isfile(drivers3dPath):
         config = common.readIniFile(drivers3dPath)
         findDriverInSection(config, "MODEL", driversFiles, acPath, driversFound)
-    skinsPath = acPath + os.sep + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'skins'
+    skinsPath = os.path.join(acPath, 'content', 'cars', carModId, 'skins')
     if os.path.isdir(skinsPath):
         for skin in os.listdir(skinsPath):
-            skinPath = skinsPath + os.sep + skin
+            skinPath = os.path.join(skinsPath, skin)
             if os.path.isdir(skinPath):
-                extConfig = skinPath + os.sep + 'ext_config.ini'
+                extConfig = os.path.join(skinPath, 'ext_config.ini')
                 if os.path.isfile(extConfig):
                     config = common.readIniFile(extConfig)
                     findDriverInSection(config, "DRIVER3D_MODEL", driversFiles, acPath, driversFound)

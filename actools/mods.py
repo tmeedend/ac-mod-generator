@@ -34,20 +34,20 @@ class ModTools(ABC):
     def packMod(self, mod, params, dir):
         print('generating mod for mod ' + mod)
         workdir = tempfile.mkdtemp()
-        modspath = dir + os.sep + 'content' + os.sep + self.modType() + 's'
-        listfilename = workdir + os.sep + mod + ".txt"
+        modspath = os.path.join(dir, 'content', self.modType() + 's')
+        listfilename = os.path.join(workdir, mod + ".txt")
 
         # read version
-        modPath = modspath + os.sep + mod
-        mod_ui_json = modPath + os.sep +'ui' + os.sep + 'ui_' + self.modType() + '.json'
+        modPath = os.path.join(modspath, mod)
+        mod_ui_json = os.path.join(modPath, 'ui', 'ui_' + self.modType() + '.json')
         jsonFile = None
         try:
             if os.path.isfile(mod_ui_json):
                 jsonFile = common.parseJson(mod_ui_json)
             else:
-                for layout in os.listdir(modPath + os.sep +'ui'):
-                    if os.path.isdir(os.path.join(modPath + os.sep +'ui',layout)):
-                        mod_ui_json = modPath + os.sep +'ui' + os.sep + layout + os.sep +'ui_' + self.modType() + '.json'
+                for layout in os.listdir(os.path.join(modPath, 'ui')):
+                    if os.path.isdir(os.path.join(modPath, 'ui',layout)):
+                        mod_ui_json = os.path.join(modPath, 'ui', layout, 'ui_' + self.modType() + '.json')
                         if os.path.isfile(mod_ui_json):
                             jsonFile = common.parseJson(mod_ui_json)
                 if jsonFile == None:
@@ -72,7 +72,7 @@ class ModTools(ABC):
         if params.updateModUrlForAcServer:
            self.updateModUrlForAcServer(modPath, modVersionName, self.modDownloadUrlPrefix(params), dir)
 
-        archiveFile = self.destination(params) + os.sep + modVersionName + '.7z'
+        archiveFile = os.path.join(self.destination(params), modVersionName + '.7z')
         override=False
         if(params.forceOverride):
             override = True
@@ -90,7 +90,7 @@ class ModTools(ABC):
         listfile = open(listfilename, "x")
 
         for fileToZip in self.modFiles(mod, dir):
-            if os.path.isfile(dir + os.sep + fileToZip) or os.path.isdir(dir + os.sep + fileToZip):
+            if os.path.isfile(os.path.join(dir, fileToZip)) or os.path.isdir(os.path.join(dir, fileToZip)):
                 listfile.write(fileToZip + '\n')    
         listfile.close()
 
@@ -102,12 +102,12 @@ class ModTools(ABC):
         os.remove(listfilename)
 
     def packAllMods(self, params, dir):
-        modspath = dir + os.sep + 'content' + os.sep + self.modType() + 's'
+        modspath = os.path.join(dir, 'content', self.modType() + 's')
         mods = os.listdir(modspath)
         for mod in mods:
             if not self.isKunosMod(mod):
                 self.packMod(mod, params, dir)
-            else
+            else:
                 print("Skipping kunos mod " + mod)
 
 
