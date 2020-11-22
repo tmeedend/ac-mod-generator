@@ -107,5 +107,7 @@ class ModTools(ABC):
         for mod in mods:
             if not self.isKunosMod(mod):
                 self.packMod(mod, params, dir)
+            else
+                print("Skipping kunos mod " + mod)
 
 
