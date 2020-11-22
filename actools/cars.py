@@ -8,19 +8,7 @@ import json
 import urllib.parse
 
 class CarTools(mods.ModTools):
-
-    def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
-        metadataFilePath =  os.path.join(modDir, "ui", "ui_car.json")
-        jsonData = common.parseJson(metadataFilePath)
-        jsonData["downloadURL"] = urlPrefix + urllib.parse.quote(archiveName) + '.7z'
-        with open(metadataFilePath, "w") as jsonFile:
-            json.dump(jsonData, jsonFile, indent=2)
-
-    def modType(self): 
-        return "car"
-
-    def kunosMods(self):
-        return {
+    kunosCars = {
             "abarth500",
             "abarth500_s1",
             "alfa_romeo_giulietta_qv",
@@ -200,6 +188,19 @@ class CarTools(mods.ModTools):
             "shelby_cobra_427sc",
             "tatuusfa1"
             }
+    def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
+        metadataFilePath =  os.path.join(modDir, "ui", "ui_car.json")
+        jsonData = common.parseJson(metadataFilePath)
+        jsonData["downloadURL"] = urlPrefix + urllib.parse.quote(archiveName) + '.7z'
+        with open(metadataFilePath, "w") as jsonFile:
+            json.dump(jsonData, jsonFile, indent=2)
+
+    def modType(self): 
+        return "car"
+
+    def isKunosMod(self, modId):
+        return modId in self.kunosCars
+        
     
     def destination(self, params):
         return params.carsDestination

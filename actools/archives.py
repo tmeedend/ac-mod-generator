@@ -37,9 +37,10 @@ def appendMod(file, newModDir, type):
         shutil.move(dir,carsPath)
 
 def transformToValidMod(params):
-    if not os.path.isfile(params.archiveToProcess ):
-        print("Cannot find archive " +  params.archiveToProcess)
-        return
+    if not paramsToUse.archiveToProcess == None:
+        if not os.path.isfile(params.archiveToProcess ):
+            print("Cannot find archive " +  params.archiveToProcess)
+            return
 
     workdir = tempfile.mkdtemp()
     common.unzipFileToDir(params.sevenzipexec, params.archiveToProcess, workdir)
@@ -55,5 +56,5 @@ def transformToValidMod(params):
                 appendMod(file, newModDir, 'TRACK')
             elif isCar(file):
                 appendMod(file, newModDir, 'CAR')
-    common.zipFileToDir(params.sevenzipexec, newModDir, os.path.join(os.getcwd(), 'archive7z'), None, params.override, None)
+    common.zipFileToDir(params.sevenzipexec, newModDir, os.path.join(os.getcwd(), 'archive7z'), None, params.forceOverride, None)
                 
