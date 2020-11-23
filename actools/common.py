@@ -48,7 +48,7 @@ def extractAcd(quickbmsexec, dataAcdFile, destination):
 
 def runCommand(archiveCmd):
 	print('executing ' + archiveCmd)
-	proc = subprocess.Popen(archiveCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	proc = subprocess.Popen(archiveCmd)
 	#while proc.poll() is None:
 	#	time.sleep(0.5)
 	#	print("p21")
