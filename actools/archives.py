@@ -2,10 +2,38 @@ import os
 import tempfile
 from actools import common
 import shutil
+import ntpath
+def findLongestPrefix(m):
+    if not m: return ''
+    s1 = min(m)
+    s2 = max(m)
+    for i, c in enumerate(s1):
+        if c != s2[i]:
+            return s1[:i]
+    return s1
 
+def findModName(finalModeDir, originalArchiveName):
+    carslist = os.listdir(os.path.join(finalModeDir, 'content', 'cars'))
+    tracklist =  = os.listdir(os.path.join(finalModeDir, 'content', 'tracks'))
+    carsNumber = len(carslist)
+    tracksNumber = len(tracklist)
+    if carsNumber > 0 and tracksNumber > 0:
+        # we cannot find a descent archive name, return the original name
+        return originalArchiveName
+    if carsNumber > 0:
+        if carsNumber == 1:
+            return extractCarArchiveName()
+        else
+            return findLongestPrefix(carslist)
+
+    elif tracksNumber > 0:
+        if tracksNumber == 1:
+            return extractTrackArchiveName()
+        else
+            return findLongestPrefix(tracklist)
 def isMod(dir):
     for filename in os.listdir(dir):
-        file = os.path.join(workdir, filename)
+        file = os.path.join(dir, filename)
         if os.path.isdir(file) and filename == 'content':
             return True
     return False 
@@ -24,20 +52,22 @@ def isTrack(dir):
 def isCar(dir):
     return os.path.isfile(os.path.join(dir, 'ui', 'ui_car.json'))
 
-def appendMod(file, newModDir, type):
+def appendMod(dir, newModDir, type):
     if type == 'MOD':
-        shutil.move(dir,newModDir)
+        for subdirname in os.listdir(dir):
+            subdir = os.path.join(dir, subdirname)
+            shutil.move(subdir,newModDir)
     elif  type == 'TRACK':
-        tracksPath = os.path.join(newModDir), 'content', 'tracks'
+        tracksPath = os.path.join(newModDir, 'content', 'tracks')
         os.makedirs(tracksPath)
         shutil.move(dir,tracksPath)
     elif  type == 'CAR':
-        carsPath = os.path.join(newModDir), 'content', 'cars'
+        carsPath = os.path.join(newModDir, 'content', 'cars')
         os.makedirs(carsPath)
         shutil.move(dir,carsPath)
 
 def transformToValidMod(params):
-    if not paramsToUse.archiveToProcess == None:
+    if not params.archiveToProcess == None:
         if not os.path.isfile(params.archiveToProcess ):
             print("Cannot find archive " +  params.archiveToProcess)
             return
@@ -56,5 +86,6 @@ def transformToValidMod(params):
                 appendMod(file, newModDir, 'TRACK')
             elif isCar(file):
                 appendMod(file, newModDir, 'CAR')
-    common.zipFileToDir(params.sevenzipexec, newModDir, os.path.join(os.getcwd(), 'archive7z'), None, params.forceOverride, None)
+    finalArchiveName = findModName(newModDir, ntpath.basename(params.archiveToProcess))
+    common.zipFileToDir(params.sevenzipexec, newModDir, os.path.join(os.getcwd(), finalArchiveName), None, params.forceOverride, None)
                 

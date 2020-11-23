@@ -56,8 +56,8 @@ class Params:
 		
 		if not os.path.isfile(self.sevenzipexec):
 			sys.exit("Cannot find 7zip executable. Exiting") 
-		if not os.path.isdir(self.acpath):
-			sys.exit("Cannot find Assetto Corsa install folder. Exiting") 
+		#if not os.path.isdir(self.acpath):
+		#	sys.exit("Cannot find Assetto Corsa install folder. Exiting") 
 
 		argsparser = argparse.ArgumentParser(description='Build/clean Assetto Corsa mods from mods archives or folders')
 		argsparser.add_argument('-g','--update_mod_url', action='store_true', help='Generate the meta_data.json needed for acServer or update ui_car.json', required=False)

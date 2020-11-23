@@ -23,7 +23,8 @@ def getNewestFile(modPath):
 	return os.path.getctime(latest_file)
 
 def unzipFileToDir(sevenzipexec, archiveFile, destination):
-	archiveCmd = sevenzipexec + ' e ' + archiveFile + ' -o "' + destination + '"'
+	archiveCmd = sevenzipexec + ' x ' + archiveFile + ' -o"' + destination + '"'
+	print('executing ' + archiveCmd)
 	subprocess.Popen(archiveCmd).communicate()
 
 def readIniFile(iniFile):

@@ -29,7 +29,9 @@ class ModTools(ABC):
 
     def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
         pass
-
+    
+    def extractModArchiveName(self, modDir):
+        pass
 
     def packMod(self, mod, params, dir):
         print('generating mod for mod ' + mod)
