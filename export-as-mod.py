@@ -23,8 +23,8 @@ def processMod(paramsToUse, modTool, modsToProcess):
 
 paramsToUse = params.Params()
 paramsToUse.checkEnv()
-processMod(paramsToUse, tracks.TrackTools(paramsToUse.acpath, paramsToUse.sevenzipexec), paramsToUse.tracksToProcess)
-processMod(paramsToUse, cars.CarTools(paramsToUse.acpath, paramsToUse.sevenzipexec), paramsToUse.carsToProcess)
+processMod(paramsToUse, tracks.TrackTools(paramsToUse.sevenzipexec, paramsToUse.quickbmsexec), paramsToUse.tracksToProcess)
+processMod(paramsToUse, cars.CarTools(paramsToUse.sevenzipexec, paramsToUse.quickbmsexec), paramsToUse.carsToProcess)
 archives.transformToValidMod(paramsToUse)
 # verifier les / a la fin des chemins et les enlever si besoin
 # modFiles : vérifier dans cette méthode si les fichiers existent

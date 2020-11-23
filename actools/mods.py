@@ -10,10 +10,11 @@ from abc import ABC
 class ModTools(ABC):
 
     sevenzipexec = None
+    quickbmsexec = None
     includeAcServerMetatadaFileInArchive = False
-    def __init__(self, acpath, sevenzipexec):
+    def __init__(self, sevenzipexec, quickbmsexec):
         self.sevenzipexec = sevenzipexec
-
+        self.quickbmsexec = quickbmsexec
     def modType(self): 
         pass
 

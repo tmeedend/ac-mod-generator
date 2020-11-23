@@ -223,5 +223,5 @@ class CarTools(mods.ModTools):
          os.path.join('extension', 'config', self.modType()  + 's', modId + '.ini.blm')
         ]
         # filesArray.extend(fonts.find(acpath, modId))
-        filesArray.extend(drivers.find(acpath, modId))
+        filesArray.extend(drivers.find(acpath, modId, self.quickbmsexec))
         return filesArray

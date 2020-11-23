@@ -11,7 +11,7 @@ class Params:
 
 	sevenzipexec = None
 	acpath = None
-
+	quickbmsexec = None
 	tracksToProcess = None
 	carsToProcess = None
 	archiveToProcess = None
@@ -53,6 +53,11 @@ class Params:
 			sys.exit("Cannot read actools config file. Exiting") 
 		self.sevenzipexec = self.readMandatoryConfigField(configJsonFile, '7zipexec').replace("/", os.sep)
 		self.acpath = self.readMandatoryConfigField(configJsonFile, 'assetto-corsa-install-folder').replace("/", os.sep)
+		self.quickbmsexec = configJsonFile['quickbmsexec']
+		if self.quickbmsexec != None:
+			self.quickbmsexec = self.quickbmsexec.replace("/", os.sep)
+		if not os.path.isfile(self.quickbmsexec):
+			self.quickbmsexec = None
 		
 		if not os.path.isfile(self.sevenzipexec):
 			sys.exit("Cannot find 7zip executable. Exiting") 

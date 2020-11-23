@@ -1,5 +1,6 @@
 import os
 from actools import common
+import tempfile
 
 def isKunosDriver(fontName):
     return fontName in {"2016_Driver","driver","driver_60","driver_70","driver_80","driver_back","driver_lod_b","driver_no_HANS","driver_ocolus",
@@ -55,16 +56,30 @@ def findCrewFiles(skinPath, crewType, driversFiles, acPath, crewsFound):
                             crewsFound.add(crewName)
                             driversFiles.extend(getFilesForCrew(acPath, crewType, crewName))
 
-def find(acPath, carModId):
+def find(acPath, carModId, quickbmsexec):
     driversFiles = []
     driversFound = set() 
     helmetsFound = set() 
     suitsFound = set() 
     brandFound = set() 
+
+    # find in driver3d
     drivers3dPath = os.path.join(acPath, 'content', 'cars', carModId, 'data', 'driver3d.ini')
     if os.path.isfile(drivers3dPath):
         config = common.readIniFile(drivers3dPath)
         findDriverInSection(config, "MODEL", driversFiles, acPath, driversFound)
+    
+    # find in ACD file
+    dataAcdFile = os.path.join(acPath, 'content', 'cars', carModId, 'data.acd')
+    if os.path.isfile(dataAcdFile):
+        dataAcdWorkdir = tempfile.mkdtemp()
+        common.extractAcd(quickbmsexec, dataAcdFile, dataAcdWorkdir)
+        drivers3dAcdPath = os.path.join(dataAcdWorkdir, 'driver3d.ini')
+        if os.path.isfile(drivers3dAcdPath):
+                config = common.readIniFile(drivers3dAcdPath)
+                findDriverInSection(config, "MODEL", driversFiles, acPath, driversFound)
+    
+    # find in skins
     skinsPath = os.path.join(acPath, 'content', 'cars', carModId, 'skins')
     if os.path.isdir(skinsPath):
         for skin in os.listdir(skinsPath):
