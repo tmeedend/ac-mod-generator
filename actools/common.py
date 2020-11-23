@@ -36,9 +36,15 @@ def readIniFile(iniFile):
 		config = ConfigParser(strict=False)
 		config.read(iniFile, encoding='utf_8_sig')
 		return config
+
 def extractAcd(quickbmsexec, dataAcdFile, destination):
-	archiveCmd = quickbmsexec + ' "' + 'acd.bms' + '"  "' + dataAcdFile + '" "' + destination +'"'
-	runCommand(archiveCmd)
+	origWD = os.getcwd() # remember our original working directory
+	try:
+		os.chdir(destination) 
+		archiveCmd = quickbmsexec + ' "' + 'acd.bms' + '"  "' + dataAcdFile + '"'
+		runCommand(archiveCmd)
+	finally:
+		os.chdir(origWD) # get back to our original working directory 
 
 def runCommand(archiveCmd):
 	print('executing ' + archiveCmd)
