@@ -222,6 +222,12 @@ class CarTools(mods.ModTools):
          os.path.join('extension', 'config', self.modType()  + 's', 'loaded', modId + '.ini'),
          os.path.join('extension', 'config', self.modType()  + 's', modId + '.ini.blm')
         ]
-        # filesArray.extend(fonts.find(acpath, modId))
-        filesArray.extend(drivers.find(acpath, modId, self.quickbmsexec))
+
+        dataAcdFile = os.path.join(acpath, 'content', 'cars', modId, 'data.acd')
+        if os.path.isfile(dataAcdFile):
+            dataAcdWorkdir = tempfile.mkdtemp()
+            common.extractAcd(self.quickbmsexec, dataAcdFile, dataAcdWorkdir)
+
+        filesArray.extend(fonts.find(acpath, modId, dataAcdWorkdir))
+        filesArray.extend(drivers.find(acpath, modId, dataAcdWorkdir))
         return filesArray

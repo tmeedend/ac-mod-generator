@@ -56,7 +56,7 @@ def findCrewFiles(skinPath, crewType, driversFiles, acPath, crewsFound):
                             crewsFound.add(crewName)
                             driversFiles.extend(getFilesForCrew(acPath, crewType, crewName))
 
-def find(acPath, carModId, quickbmsexec):
+def find(acPath, carModId, dataAcdWorkdir):
     driversFiles = []
     driversFound = set() 
     helmetsFound = set() 
@@ -70,10 +70,7 @@ def find(acPath, carModId, quickbmsexec):
         findDriverInSection(config, "MODEL", driversFiles, acPath, driversFound)
     
     # find in ACD file
-    dataAcdFile = os.path.join(acPath, 'content', 'cars', carModId, 'data.acd')
-    if os.path.isfile(dataAcdFile):
-        dataAcdWorkdir = tempfile.mkdtemp()
-        common.extractAcd(quickbmsexec, dataAcdFile, dataAcdWorkdir)
+    if not dataAcdWorkdir == None:
         drivers3dAcdPath = os.path.join(dataAcdWorkdir, 'driver3d.ini')
         if os.path.isfile(drivers3dAcdPath):
                 config = common.readIniFile(drivers3dAcdPath)

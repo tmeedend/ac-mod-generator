@@ -29,22 +29,16 @@ def unzipFileToDir(sevenzipexec, archiveFile, destination):
 
 def readIniFile(iniFile):
 	try:
-		config = ConfigParser(strict=False)
+		config = ConfigParser(strict=False, comment_prefixes=('#', ';','/'))
 		config.read(iniFile)
 		return config
 	except:
-		config = ConfigParser(strict=False)
+		config = ConfigParser(strict=False, comment_prefixes=('#', ';','/'))
 		config.read(iniFile, encoding='utf_8_sig')
 		return config
-
 def extractAcd(quickbmsexec, dataAcdFile, destination):
-	origWD = os.getcwd() # remember our original working directory
-	try:
-		os.chdir(destination) 
-		archiveCmd = quickbmsexec + ' "' + 'acd.bms' + '"  "' + dataAcdFile + '"'
-		runCommand(archiveCmd)
-	finally:
-		os.chdir(origWD) # get back to our original working directory 
+	archiveCmd = quickbmsexec + ' "' + 'acd.bms' + '"  "' + dataAcdFile + '" "' + destination + '"'
+	runCommand(archiveCmd)
 
 def runCommand(archiveCmd):
 	print('executing ' + archiveCmd)

@@ -80,6 +80,8 @@ def transformToValidMod(params):
         if not os.path.isfile(params.archiveToProcess ):
             print("Cannot find archive " +  params.archiveToProcess)
             return
+    else:
+        return
 
     workdir = tempfile.mkdtemp()
     common.unzipFileToDir(params.sevenzipexec, params.archiveToProcess, workdir)

@@ -1,4 +1,5 @@
 import os
+from actools import common
 from configparser import ConfigParser
 
 def isKunosFont(fontName):
@@ -26,14 +27,10 @@ def getFilesForFont(acpath, fontname):
         fontFiles.append(ttfFileName)
         print("found font file " + ttfFileName)
     return fontFiles
-    
-def find(acPath, carModId):
-    config = ConfigParser()
-    fontsFound = set() 
-    fontFiles = []
-    digitalInstrumentsPath = acPath + os.sep  + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'data' + os.sep + 'digital_instruments.ini'
+
+def findFontsInDigitalInstruments(digitalInstrumentsPath, fontsFound, fontFiles):
     if os.path.isfile(digitalInstrumentsPath):
-        config.read(digitalInstrumentsPath)
+        config = common.readIniFile(digitalInstrumentsPath)
         i = 0
         section = "ITEM_" + str(i)
         while config.has_section(section):
@@ -44,4 +41,14 @@ def find(acPath, carModId):
                     fontsFound.add(fontName)
             i = i + 1
             section = "ITEM_" + str(i)
+
+def find(acPath, carModId, dataAcdWorkdir):
+    fontsFound = set() 
+    fontFiles = []
+    digitalInstrumentsPath = acPath + os.sep  + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'data' + os.sep + 'digital_instruments.ini'
+    findFontsInDigitalInstruments(digitalInstrumentsPath, fontsFound, fontFiles)
+    if not dataAcdWorkdir == None:
+        digitalInstrumentsAcdPath = os.path.join(dataAcdWorkdir, 'digital_instruments.ini')
+        if os.path.isfile(digitalInstrumentsAcdPath):
+            findFontsInDigitalInstruments(digitalInstrumentsAcdPath, fontsFound, fontFiles)
     return fontFiles
