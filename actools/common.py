@@ -4,6 +4,7 @@ import subprocess
 import os
 import glob 
 import time
+import re
 from configparser import ConfigParser
 
 def cleanName(name):
@@ -23,9 +24,8 @@ def getNewestFile(modPath):
 	return os.path.getctime(latest_file)
 
 def unzipFileToDir(sevenzipexec, archiveFile, destination):
-	archiveCmd = sevenzipexec + ' x ' + archiveFile + ' -o"' + destination + '"'
-	print('executing ' + archiveCmd)
-	subprocess.Popen(archiveCmd).communicate()
+	archiveCmd = sevenzipexec + ' x "' + archiveFile + '" -o"' + destination + '"'
+	runCommand(archiveCmd)
 
 def readIniFile(iniFile):
 	try:
@@ -36,6 +36,18 @@ def readIniFile(iniFile):
 		config = ConfigParser(strict=False)
 		config.read(iniFile, encoding='utf_8_sig')
 		return config
+
+def runCommand(archiveCmd):
+	print('executing ' + archiveCmd)
+	proc = subprocess.Popen(archiveCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	#while proc.poll() is None:
+	#	time.sleep(0.5)
+	#	print("p21")
+	#	data = proc.stdout.readline()
+	#	percents = re.findall('\\d*%', data.decode())
+	#	if len(percents) > 0:
+	#		print ("percent" + percents[0])
+	proc.communicate()	
 
 def zipFileToDir(sevenzipexec, workingDirectory, archiveFile, listfilename, override, excludeArgs):
 	origWD = os.getcwd() # remember our original working directory
@@ -54,8 +66,7 @@ def zipFileToDir(sevenzipexec, workingDirectory, archiveFile, listfilename, over
 			archiveCmd = sevenzipexec + ' a "' + archiveFile + '" -spf @' + listfilename
 		if not excludeArgs  == None:
 			archiveCmd = archiveCmd + " -xr!" + excludeArgs
-		print('executing ' + archiveCmd)
-		subprocess.Popen(archiveCmd).communicate()
+		runCommand(archiveCmd)
 	except:
 		print("Error while archiving mod") 
 	finally:

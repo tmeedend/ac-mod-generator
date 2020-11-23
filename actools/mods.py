@@ -1,6 +1,7 @@
 import tempfile
 import os
 import time
+import ntpath
 from actools import common
 from actools import params
 import urllib.parse
@@ -24,44 +25,19 @@ class ModTools(ABC):
 
     def destination(self, params):
         pass
+    
     def modDownloadUrlPrefix(self, params):
         pass  
 
     def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
         pass
     
-    def extractModArchiveName(self, modDir):
+    def getUiJson(self, modDir):
         pass
 
-    def packMod(self, mod, params, dir):
-        print('generating mod for mod ' + mod)
-        workdir = tempfile.mkdtemp()
-        modspath = os.path.join(dir, 'content', self.modType() + 's')
-        listfilename = os.path.join(workdir, mod + ".txt")
-
-        # read version
-        modPath = os.path.join(modspath, mod)
-        mod_ui_json = os.path.join(modPath, 'ui', 'ui_' + self.modType() + '.json')
-        jsonFile = None
-        try:
-            if os.path.isfile(mod_ui_json):
-                jsonFile = common.parseJson(mod_ui_json)
-            else:
-                for layout in os.listdir(os.path.join(modPath, 'ui')):
-                    if os.path.isdir(os.path.join(modPath, 'ui',layout)):
-                        mod_ui_json = os.path.join(modPath, 'ui', layout, 'ui_' + self.modType() + '.json')
-                        if os.path.isfile(mod_ui_json):
-                            jsonFile = common.parseJson(mod_ui_json)
-                if jsonFile == None:
-                    print("Cannot find ui_" + self.modType() + ".json for mod " + mod)
-                    return
-                
-                
-
-        except Exception as e:
-            print("Cannot parse " + mod_ui_json + ": ")
-            print(e)
-            return
+    def extractModArchiveName(self, modDir):
+        mod = ntpath.basename(modDir)
+        jsonFile = self.getUiJson(modDir)
         modVersion = jsonFile['version'] if 'version' in jsonFile else None
         modAuthor = jsonFile['author'] if 'author' in jsonFile else None
         modVersionName = mod
@@ -69,8 +45,23 @@ class ModTools(ABC):
             modVersionName += " " + modVersion
         if not modAuthor == None:
             modVersionName += " by " + modAuthor
-        modVersionName = common.cleanName(modVersionName)
-        # update downloadUrl
+        return common.cleanName(modVersionName)
+
+    def packMod(self, mod, params, dir):
+        print('generating mod for mod ' + mod)
+        workdir = tempfile.mkdtemp()
+        modspath = os.path.join(dir, 'content', self.modType() + 's')
+        listfilename = os.path.join(workdir, mod + ".txt")
+        modPath = os.path.join(modspath, mod)
+        try:    
+            modVersionName = self.extractModArchiveName(modPath)
+        except Exception as e:
+            print("Cannot parse " + self.modType() + "_ui_json: ")
+            print(e)
+            return
+
+
+
         if params.updateModUrlForAcServer:
            self.updateModUrlForAcServer(modPath, modVersionName, self.modDownloadUrlPrefix(params), dir)
 

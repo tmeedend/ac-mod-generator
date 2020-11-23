@@ -195,6 +195,10 @@ class CarTools(mods.ModTools):
         with open(metadataFilePath, "w") as jsonFile:
             json.dump(jsonData, jsonFile, indent=2)
 
+    def getUiJson(self, modPath):
+        mod_ui_json = os.path.join(modPath, 'ui', 'ui_' + self.modType() + '.json')
+        return common.parseJson(mod_ui_json)
+
     def modType(self): 
         return "car"
 

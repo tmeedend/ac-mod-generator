@@ -3,10 +3,24 @@ import os
 from actools import common
 from actools import mods
 import urllib.parse
+import ntpath
 
 class TrackTools(mods.ModTools):
 
     kunosTracks = {"ks_barcelona", "ks_black_cat_county", "ks_brands_hatch", "ks_drag", "ks_highlands", "ks_laguna_seca", "ks_monza66", "ks_nordschleife", "ks_nurburgring", "ks_red_bull_ring", "ks_silverstone", "ks_silverstone1967", "ks_vallelunga", "ks_zandvoort", "magione", "monza", "mugello", "spa", "trento-bondone", "drift", "imola"}
+
+    def getUiJson(self, modPath):
+        mod_ui_json = os.path.join(modPath, 'ui', 'ui_' + self.modType() + '.json')
+        jsonFile = None
+        if os.path.isfile(mod_ui_json):
+            jsonFile = common.parseJson(mod_ui_json)
+        else:
+            for layout in os.listdir(os.path.join(modPath, 'ui')):
+                if os.path.isdir(os.path.join(modPath, 'ui',layout)):
+                    mod_ui_json = os.path.join(modPath, 'ui', layout, 'ui_' + self.modType() + '.json')
+                    if os.path.isfile(mod_ui_json):
+                        jsonFile = common.parseJson(mod_ui_json)
+        return jsonFile
 
     def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
         metadataFilePath = os.path.join(modDir, "ui", "meta_data.json")

@@ -87,6 +87,13 @@ class Params:
 
 		if self.tracksDestination == None or self.tracksDestination == "":
 			self.tracksDestination = os.getcwd()
+		else:
+			self.tracksDestination = self.tracksDestination.replace("/", os.sep)
 			
 		if self.carsDestination == None or self.carsDestination == "":
 			self.carsDestination = os.getcwd()
+		else:
+			self.carsDestination = self.carsDestination.replace("/", os.sep)
+
+		if self.archiveToProcess != None:
+			self.archiveToProcess = self.archiveToProcess.replace("/", os.sep)
