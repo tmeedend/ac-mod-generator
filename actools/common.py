@@ -5,6 +5,7 @@ import os
 import glob 
 import time
 import re
+import fileinput
 from configparser import ConfigParser
 
 def cleanName(name):
@@ -20,7 +21,7 @@ def parseJson(jsonfilename):
 def getNewestFile(modPath):
 	list_of_files = glob.glob(modPath + '/**', recursive=True) 
 	latest_file = max(list_of_files, key=os.path.getmtime)
-	print('latest file is ' + latest_file + " date: %s" % time.ctime(os.path.getctime(latest_file)))
+	print('\tlatest file is ' + latest_file + " date: %s" % time.ctime(os.path.getctime(latest_file)))
 	return os.path.getctime(latest_file)
 
 def unzipFileToDir(sevenzipexec, archiveFile, destination):
@@ -28,21 +29,31 @@ def unzipFileToDir(sevenzipexec, archiveFile, destination):
 	runCommand(archiveCmd)
 
 def readIniFile(iniFile):
+	# some mods use /// to add comments, clean them as it would break the .ini parsing
+	for line in fileinput.input(iniFile, inplace=True):
+		line = re.sub('(.)*//(/)*','', line.rstrip())
+		print(line)
 	try:
-		config = ConfigParser(strict=False, comment_prefixes=('#', ';','/'))
+		config = ConfigParser(strict=False, allow_no_value=True)
 		config.read(iniFile)
 		return config
 	except:
-		config = ConfigParser(strict=False, comment_prefixes=('#', ';','/'))
+		config = ConfigParser(strict=False, allow_no_value=True)
 		config.read(iniFile, encoding='utf_8_sig')
 		return config
+
 def extractAcd(quickbmsexec, dataAcdFile, destination):
 	archiveCmd = quickbmsexec + ' "' + 'acd.bms' + '"  "' + dataAcdFile + '" "' + destination + '"'
-	runCommand(archiveCmd)
+	runCommand(archiveCmd, True)
 
-def runCommand(archiveCmd):
-	print('executing ' + archiveCmd)
-	proc = subprocess.Popen(archiveCmd)
+
+def runCommand(archiveCmd, quiet = False):
+	print('\texecuting ' + archiveCmd)
+	# proc = subprocess.Popen(archiveCmd)
+	if quiet:
+		proc = subprocess.Popen(archiveCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	else:
+		proc = subprocess.Popen(archiveCmd)
 	#while proc.poll() is None:
 	#	time.sleep(0.5)
 	#	print("p21")
@@ -58,10 +69,10 @@ def zipFileToDir(sevenzipexec, workingDirectory, archiveFile, listfilename, over
 		os.chdir(workingDirectory) 
 		if os.path.isfile(archiveFile):
 			if override:
-				print("Removing old archive file " + archiveFile)
+				print("\tRemoving old archive file " + archiveFile)
 				os.remove(archiveFile)
 			else:
-				print("archive file " + archiveFile + " already exists. Skipping")
+				print("\tarchive file " + archiveFile + " already exists. Skipping")
 				return
 		if listfilename == None:
 			archiveCmd = sevenzipexec + ' a "' + archiveFile + '" *'
@@ -71,6 +82,6 @@ def zipFileToDir(sevenzipexec, workingDirectory, archiveFile, listfilename, over
 			archiveCmd = archiveCmd + " -xr!" + excludeArgs
 		runCommand(archiveCmd)
 	except:
-		print("Error while archiving mod") 
+		print("\tError while archiving mod") 
 	finally:
 		os.chdir(origWD) # get back to our original working directory 

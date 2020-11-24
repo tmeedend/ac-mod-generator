@@ -1,0 +1,9 @@
+This installer will install Assetto Corsa Mod Packager on your system. It does not need administrator privileges to be installed.
+
+With this tool, you will be able to generate 7z archives of you Assetto Corsa Mods. 
+
+For a track or a car, this tool will generate a correct mod hierarchy which you will be able to use in Content Manager to enable it. It will also detect any fonts, drivers or crews files that are need by the mod and add them in the created archive.
+
+This tool is still under development, so use it at you own risk. This tool only create archives by reading mod files though.
+
+The code is Open Source, you can ask questions or report bugs on the github page: https://github.com/tmeedend/ac-mod-generator

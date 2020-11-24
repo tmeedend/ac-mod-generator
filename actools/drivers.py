@@ -23,7 +23,7 @@ def getFilesForDriver(acpath, drivername):
     kn5filename =  os.path.join('content', 'driver', drivername + '.kn5')
     if os.path.isfile(os.path.join(acpath, kn5filename)):
         driverFiles.append(kn5filename)
-    print('found driver file ' + kn5filename + " for driver " + drivername)
+    print('\tfound driver file ' + kn5filename + " for driver " + drivername)
     return driverFiles
 
 
@@ -32,7 +32,7 @@ def getFilesForCrew(acPath, crewType, crewName):
     crewDir =  os.path.join('content', 'texture', 'crew_' + crewType.lower() + crewName, "")
     if os.path.isdir(os.path.join(acPath, crewDir)):
         crewFiles.append(crewDir )
-    print('found crew dir ' + crewDir )
+    print('\tfound crew dir ' + crewDir )
     return crewFiles
 
 def findDriverInSection(config, section, driversFiles, acPath, driversFound):
@@ -40,7 +40,6 @@ def findDriverInSection(config, section, driversFiles, acPath, driversFound):
                 if config.has_option(section, 'NAME'):
                     driverName = config.get(section, 'NAME')
                     if not isKunosDriver(driverName) and not driverName in driversFound:
-                        print("found driver " + driverName)
                         driversFound.add(driverName)
                         driversFiles.extend(getFilesForDriver(acPath, driverName))
 

@@ -19,16 +19,16 @@ def getFilesForFont(acpath, fontname):
     ttfFileName = 'content' + os.sep + 'fonts' + os.sep + fontname + '.ttf' 
     if os.path.isfile(acpath + os.sep + pngFileName ):
         fontFiles.append(pngFileName)
-        print("found font file " + pngFileName)
+        print("\tfound font file " + pngFileName)
     if os.path.isfile(acpath + os.sep + txtFileName ):
         fontFiles.append(txtFileName)
-        print("found font file " + txtFileName)
+        print("\tfound font file " + txtFileName)
     if os.path.isfile(acpath + os.sep + ttfFileName ):
         fontFiles.append(ttfFileName)
-        print("found font file " + ttfFileName)
+        print("\tfound font file " + ttfFileName)
     return fontFiles
 
-def findFontsInDigitalInstruments(digitalInstrumentsPath, fontsFound, fontFiles):
+def findFontsInDigitalInstruments(acPath, digitalInstrumentsPath, fontsFound, fontFiles):
     if os.path.isfile(digitalInstrumentsPath):
         config = common.readIniFile(digitalInstrumentsPath)
         i = 0
@@ -46,9 +46,9 @@ def find(acPath, carModId, dataAcdWorkdir):
     fontsFound = set() 
     fontFiles = []
     digitalInstrumentsPath = acPath + os.sep  + 'content' + os.sep + 'cars' + os.sep + carModId + os.sep + 'data' + os.sep + 'digital_instruments.ini'
-    findFontsInDigitalInstruments(digitalInstrumentsPath, fontsFound, fontFiles)
+    findFontsInDigitalInstruments(acPath, digitalInstrumentsPath, fontsFound, fontFiles)
     if not dataAcdWorkdir == None:
         digitalInstrumentsAcdPath = os.path.join(dataAcdWorkdir, 'digital_instruments.ini')
         if os.path.isfile(digitalInstrumentsAcdPath):
-            findFontsInDigitalInstruments(digitalInstrumentsAcdPath, fontsFound, fontFiles)
+            findFontsInDigitalInstruments(acPath, digitalInstrumentsAcdPath, fontsFound, fontFiles)
     return fontFiles

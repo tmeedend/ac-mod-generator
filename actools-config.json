@@ -1,4 +1,5 @@
 {
-    "7zipexec":"C:/Program Files/7-Zip/7z.exe",
-    "assetto-corsa-install-folder":"D:/Program Files (x86)/Steam/steamapps/common/assettocorsa"
+    "7zipexec":"deps/7zip/7z.exe",
+    "assetto-corsa-install-folder":"D:/Program Files (x86)/Steam/steamapps/common/assettocorsa",
+    "quickbmsexec":"deps/quickbms.exe"
 }

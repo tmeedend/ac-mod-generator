@@ -75,16 +75,21 @@ def appendMod(dir, newModDir, type):
         os.makedirs(carsPath, exist_ok= True)
         shutil.move(dir,carsPath)
 
-def transformToValidMod(params):
-    if not params.archiveToProcess == None:
-        if not os.path.isfile(params.archiveToProcess ):
-            print("Cannot find archive " +  params.archiveToProcess)
+def archiveValidMod(params, newModDir, originalName):
+        finalArchiveName = findModName(newModDir, originalName) + '.7z'
+        common.zipFileToDir(params.sevenzipexec, newModDir, os.path.join(os.environ["HOMEPATH"], "Desktop", finalArchiveName), None, params.forceOverride, None)
+
+
+def transformToValidMod(params, archiveToProcess):
+    if not archiveToProcess == None:
+        if not os.path.isfile(archiveToProcess ):
+            print("Cannot find archive " +  archiveToProcess)
             return
     else:
         return
 
     workdir = tempfile.mkdtemp()
-    common.unzipFileToDir(params.sevenzipexec, params.archiveToProcess, workdir)
+    common.unzipFileToDir(params.sevenzipexec, archiveToProcess, workdir)
     newModDir = tempfile.mkdtemp()
     foundSomething = False
     if isMod(workdir):
@@ -103,5 +108,4 @@ def transformToValidMod(params):
                 appendMod(file, newModDir, 'CAR')
                 foundSomething = True
     if foundSomething:
-        finalArchiveName = findModName(newModDir, ntpath.basename(params.archiveToProcess)) + '.7z'
-        common.zipFileToDir(params.sevenzipexec, newModDir, os.path.join(os.getcwd(), finalArchiveName), None, params.forceOverride, None)
+        archiveValidMod(params, newModDir, ntpath.basename(archiveToProcess))

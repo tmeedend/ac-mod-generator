@@ -22,6 +22,7 @@ class Params:
 	trackDownloadUrlPrefix=""
 	overrideArchives=False
 	forceOverride=False
+	guessToProcess=None
 
 	def readMandatoryConfigField(self, configJsonFile, field):
 		value = configJsonFile[field]
@@ -45,17 +46,20 @@ class Params:
 			return True
 		return False
 
+	def properAbsPath(self, path):
+		return os.path.abspath(path.replace("/", os.sep)).strip(os.sep)
+
 	def checkEnv(self):
 		try:
 			configJsonFile = common.parseJson('actools-config.json')
 		except Exception as e:
 			print(e)
 			sys.exit("Cannot read actools config file. Exiting") 
-		self.sevenzipexec = self.readMandatoryConfigField(configJsonFile, '7zipexec').replace("/", os.sep)
-		self.acpath = self.readMandatoryConfigField(configJsonFile, 'assetto-corsa-install-folder').replace("/", os.sep)
+		self.sevenzipexec = self.properAbsPath(self.readMandatoryConfigField(configJsonFile, '7zipexec'))
+		self.acpath = self.properAbsPath(self.readMandatoryConfigField(configJsonFile, 'assetto-corsa-install-folder'))
 		self.quickbmsexec = configJsonFile['quickbmsexec']
 		if self.quickbmsexec != None:
-			self.quickbmsexec = self.quickbmsexec.replace("/", os.sep)
+			self.quickbmsexec = self.properAbsPath(self.quickbmsexec)
 		if not os.path.isfile(self.quickbmsexec):
 			self.quickbmsexec = None
 		
@@ -65,7 +69,8 @@ class Params:
 		#	sys.exit("Cannot find Assetto Corsa install folder. Exiting") 
 
 		argsparser = argparse.ArgumentParser(description='Build/clean Assetto Corsa mods from mods archives or folders')
-		argsparser.add_argument('-g','--update_mod_url', action='store_true', help='Generate the meta_data.json needed for acServer or update ui_car.json', required=False)
+		argsparser.add_argument('-g','--guess', help='Try to guess what is the file given as parameter and process it (an archive, a mod, a track or a car folder)', required=False)
+		argsparser.add_argument('-u','--update_mod_url', action='store_true', help='Generate the meta_data.json needed for acServer or update ui_car.json', required=False)
 		argsparser.add_argument('-f','--force_override', action='store_true', help='If an archive already exists in the destination folder, it will be overriden, no matter the dates', required=False)
 		argsparser.add_argument('-o','--override_archives', action='store_true', help='If an archive already exists in the destination folder, it will be overriden if the mod has a newer file than the archive to override', required=False)
 		argsparser.add_argument('-tu','--track_url_prefix', help='The URL prefix to write into the acServer meta_data.json file for tracks, for the url field', required=False)
@@ -87,18 +92,24 @@ class Params:
 		self.tracksToProcess = self.argValueOrNone(args, 'tracks')
 		self.carsToProcess = self.argValueOrNone(args, 'cars')
 		self.archiveToProcess = self.argValueOrNone(args, 'archive')
+		self.guessToProcess = self.argValueOrNone(args, 'guess')
 
 		
 
 		if self.tracksDestination == None or self.tracksDestination == "":
 			self.tracksDestination = os.getcwd()
 		else:
-			self.tracksDestination = self.tracksDestination.replace("/", os.sep)
+			self.tracksDestination = self.properAbsPath(self.tracksDestination)
 			
 		if self.carsDestination == None or self.carsDestination == "":
 			self.carsDestination = os.getcwd()
 		else:
-			self.carsDestination = self.carsDestination.replace("/", os.sep)
+			self.carsDestination = self.properAbsPath(self.carsDestination)
 
 		if self.archiveToProcess != None:
-			self.archiveToProcess = self.archiveToProcess.replace("/", os.sep)
+			self.archiveToProcess = self.properAbsPath(self.archiveToProcess)
+
+		if self.guessToProcess != None:
+			self.guessToProcess = self.properAbsPath(self.guessToProcess)
+			if not os.path.exists(self.guessToProcess):
+				sys.exit("Cannot find file to process. Exiting") 
