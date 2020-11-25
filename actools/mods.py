@@ -41,7 +41,7 @@ class ModTools(ABC):
         jsonFile = self.getUiJson(modDir)
         modVersion = jsonFile['version'] if 'version' in jsonFile else None
         modAuthor = jsonFile['author'] if 'author' in jsonFile else None
-        modVersionName = mod
+        modVersionName = self.modType() + " " + mod
         if not modVersion == None:
             modVersionName += " " + modVersion
         if not modAuthor == None:
@@ -100,7 +100,10 @@ class ModTools(ABC):
         mods = os.listdir(modspath)
         for mod in mods:
             if not self.isKunosMod(mod):
-                self.packMod(mod, params, dir)
+                try:
+                    self.packMod(mod, params, dir)
+                except:
+                    print("Error while generating mod " + mod)
             else:
                 print("Skipping kunos mod " + mod)
 

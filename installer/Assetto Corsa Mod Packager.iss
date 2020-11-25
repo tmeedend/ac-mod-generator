@@ -50,8 +50,8 @@ Source: "..\actools\*.py"; DestDir: "{app}\actools\"; Flags: ignoreversion recur
 
 [Registry]             
 Root: HKCU; Subkey: "Software\Classes\*\shell\Assetto Corsa Mod"; Flags: uninsdeletekeyifempty; ValueType: string; ValueName: "icon"; ValueData: "{app}\AC.ico"
-Root: HKCU; Subkey: "Software\Classes\*\shell\Assetto Corsa Mod\command"; Flags: uninsdeletekeyifempty; ValueType: string; ValueName: ""; ValueData: "{app}\ModPackager.bat %1"  
+Root: HKCU; Subkey: "Software\Classes\*\shell\Assetto Corsa Mod\command"; Flags: uninsdeletekeyifempty; ValueType: string; ValueName: ""; ValueData: "{app}\ModPackager.bat ""%1"""  
 
 Root: HKCU; Subkey: "Software\Classes\directory\shell\Assetto Corsa Mod"; Flags: uninsdeletekeyifempty; ValueType: string; ValueName: "icon"; ValueData: "{app}\AC.ico"
-Root: HKCU; Subkey: "Software\Classes\directory\shell\Assetto Corsa Mod\command"; Flags: uninsdeletekeyifempty; ValueType: string; ValueName: ""; ValueData: "{app}\ModPackager.bat %1"
+Root: HKCU; Subkey: "Software\Classes\directory\shell\Assetto Corsa Mod\command"; Flags: uninsdeletekeyifempty; ValueType: string; ValueName: ""; ValueData: "{app}\ModPackager.bat ""%1"""
 

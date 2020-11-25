@@ -1,8 +1,10 @@
-This installer will install Assetto Corsa Mod Packager on your system. It does not need administrator privileges to be installed.
+This installer will install Assetto Corsa Mod Packager on your system. It does not need administrator privileges to be installed. A new context menu option will be added when you right click on a file in Windows Explorer.
 
-With this tool, you will be able to generate 7z archives of you Assetto Corsa Mods. 
+With this tool, you will be able to generate valid 7z mod archives (= manageable in Content Manager mods section) of your already installed Assetto Corsa Mods. It can also do it from a mod downloaded from Internet.
 
-For a track or a car, this tool will generate a correct mod hierarchy which you will be able to use in Content Manager to enable it. It will also detect any fonts, drivers or crews files that are need by the mod and add them in the created archive.
+For a track or a car, this tool will generate a correct mod hierarchy which you will be able to use in Content Manager to enable it. It will also detect any fonts, drivers or crews files that are needed by the mod and add them in the created archive.
+
+For an archive, it will recreate the archive in the 7zip format with also the correct hierarchy attended by Content Manager. The archive will be created on your Windows Desktop.
 
 This tool is still under development, so use it at you own risk. This tool only create archives by reading mod files though.
 

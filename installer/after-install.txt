@@ -7,3 +7,5 @@ The archive will be created on your desktop.
 For the moment, you wil see the results in the appearing shell.
 
 You can also use it as a command line to automatically generate your mods. You can see the README.md situed in the app installation directory.
+
+Have fun !

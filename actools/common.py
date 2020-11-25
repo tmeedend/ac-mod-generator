@@ -47,7 +47,7 @@ def extractAcd(quickbmsexec, dataAcdFile, destination):
 	runCommand(archiveCmd, True)
 
 
-def runCommand(archiveCmd, quiet = False):
+def runCommand(archiveCmd, quiet = True):
 	# print('\texecuting ' + archiveCmd)
 	# proc = subprocess.Popen(archiveCmd)
 	if quiet:

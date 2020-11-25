@@ -27,8 +27,8 @@ def main():
 	paramsToUse.checkEnv()
 	if paramsToUse.guessToProcess != None:
 		if os.path.isfile(paramsToUse.guessToProcess):
-			extension =  os.path.splitext(paramsToUse.guessToProcess)[0].lower()
-			if extension == "rar" or extension == "zip" or extension == "7z":
+			extension = os.path.splitext(paramsToUse.guessToProcess.lower())[1]
+			if extension == ".rar" or extension == ".zip" or extension == ".7z":
 				archives.transformToValidMod(paramsToUse, paramsToUse.guessToProcess)
 				return
 		# we can process a car or track only if it's in assetto corsa dir
