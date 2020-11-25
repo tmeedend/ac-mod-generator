@@ -227,7 +227,6 @@ class CarTools(mods.ModTools):
         if os.path.isfile(dataAcdFile):
             dataAcdWorkdir = tempfile.mkdtemp()
             common.extractAcd(self.quickbmsexec, dataAcdFile, dataAcdWorkdir)
-
-        filesArray.extend(fonts.find(acpath, modId, dataAcdWorkdir))
-        filesArray.extend(drivers.find(acpath, modId, dataAcdWorkdir))
+            filesArray.extend(fonts.find(acpath, modId, dataAcdWorkdir))
+            filesArray.extend(drivers.find(acpath, modId, dataAcdWorkdir))
         return filesArray
