@@ -77,7 +77,12 @@ def appendMod(dir, newModDir, type):
 
 def archiveValidMod(params, newModDir, originalName):
         finalArchiveName = findModName(newModDir, originalName) + '.7z'
-        common.zipFileToDir(params.sevenzipexec, newModDir, os.path.join(os.environ["HOMEPATH"], "Desktop", finalArchiveName), None, params.forceOverride, None)
+        if os.access(os.getcwd(), os.W_OK):
+            destArchive = os.path.join(os.getcwd(), finalArchiveName)
+        else:
+            destArchive = os.path.join(os.environ["HOMEPATH"], "Desktop", finalArchiveName)
+        print("\tCreating mod archive " + destArchive)
+        common.zipFileToDir(params.sevenzipexec, newModDir, destArchive, None, params.forceOverride, None)
 
 
 def transformToValidMod(params, archiveToProcess):

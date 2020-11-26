@@ -23,9 +23,20 @@ class Params:
 	overrideArchives=False
 	forceOverride=False
 	guessToProcess=None
+	appDir = None
 
-	def readMandatoryConfigField(self, configJsonFile, field):
-		value = configJsonFile[field]
+	def __init__(self, appDir):
+		self.appDir = appDir
+
+
+	def readMandatoryConfigField(self, configIniFile, field):
+		value = configIniFile.get('SETTINGS', field)
+		if value == None or value == '':
+			sys.exit("Cannot read field " + field + " from actools config file")
+		return value
+
+	def readConfigField(self, configIniFile, field):
+		value = configIniFile.get('SETTINGS', field)
 		if value == None or value == '':
 			sys.exit("Cannot read field " + field + " from actools config file")
 		return value
@@ -51,13 +62,13 @@ class Params:
 
 	def checkEnv(self):
 		try:
-			configJsonFile = common.parseJson('actools-config.json')
+			configIniFile = common.readIniFile(os.path.join(self.appDir,'configuration.ini'))
 		except Exception as e:
 			print(e)
 			sys.exit("Cannot read actools config file. Exiting") 
-		self.sevenzipexec = self.properAbsPath(self.readMandatoryConfigField(configJsonFile, '7zipexec'))
-		self.acpath = self.properAbsPath(self.readMandatoryConfigField(configJsonFile, 'assetto-corsa-install-folder'))
-		self.quickbmsexec = configJsonFile['quickbmsexec']
+		self.sevenzipexec = self.properAbsPath(self.readMandatoryConfigField(configIniFile, '7ZIP_EXEC'))
+		self.acpath = self.properAbsPath(self.readMandatoryConfigField(configIniFile, 'ASSETTOCORSA_PATH'))
+		self.quickbmsexec = self.readMandatoryConfigField(configIniFile, 'QUICKBMS_EXE')
 		if self.quickbmsexec != None:
 			self.quickbmsexec = self.properAbsPath(self.quickbmsexec)
 		if not os.path.isfile(self.quickbmsexec):

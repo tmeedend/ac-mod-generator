@@ -27,6 +27,7 @@ InfoAfterFile=after-install.txt
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=commandline
+DisableDirPage=no
 OutputDir=installer\installer-bin
 Compression=lzma
 SolidCompression=yes
@@ -39,10 +40,10 @@ Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 [Files]
 Source: "..\deps\*"; DestDir: "{app}\deps\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\export-as-mod.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\actools-config.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\configuration.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\ModPackager.bat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\ModPackager.bat"; DestDir: "{app}"; Flags: ignoreversion ; AfterInstall: WriteBatFile()
 Source: "..\AC.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\actools\*.py"; DestDir: "{app}\actools\"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
@@ -55,3 +56,66 @@ Root: HKCU; Subkey: "Software\Classes\*\shell\Assetto Corsa Mod\command"; Flags:
 Root: HKCU; Subkey: "Software\Classes\directory\shell\Assetto Corsa Mod"; Flags: uninsdeletekeyifempty; ValueType: string; ValueName: "icon"; ValueData: "{app}\AC.ico"
 Root: HKCU; Subkey: "Software\Classes\directory\shell\Assetto Corsa Mod\command"; Flags: uninsdeletekeyifempty; ValueType: string; ValueName: ""; ValueData: "{app}\ModPackager.bat ""%1"""
 
+[INI]
+Filename: {app}\configuration.ini; Section: SETTINGS; Key: ASSETTOCORSA_PATH; String: {code:GetACPath}
+
+
+[code]
+var
+ACDirPage : TInputDirWizardPage; 
+InstallationPath: string;
+
+function GetInstallationPath(): string;
+begin
+  { Detected path is cached, as this gets called multiple times }
+  if InstallationPath = '' then
+  begin
+    if RegQueryStringValue(
+         HKLM64, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 244210',
+         'InstallLocation', InstallationPath) then
+    begin
+      Log('Detected Steam installation: ' + InstallationPath);
+    end
+      else
+    begin
+      InstallationPath := 'C:\Program Files (x86)\Steam\steamapps\common\assettocorsa';
+      Log('No installation detected, using the default path: ' + InstallationPath);
+    end;
+  end;
+  Result := InstallationPath;
+end;
+
+
+function BoolToStr(Value: Boolean): String; 
+begin
+  if Value then
+    Result := 'Yes'
+  else
+    Result := 'No';
+end;
+
+procedure InitializeWizard;
+begin
+ACDirPage  := CreateInputDirPage(wpSelectDir,
+  'Select Assetto Corsa directtory', 'This information is used to be able to generate 7zip archives from your installed Assetto Corsa mods. It''s not required if you only use this tool to generate mods from downloaded mods.', 'Your assettocorsa directory should be in the folder steamapps\common of your Steam installation.', True, '');   
+  ACDirPage.Add('Select assettocorsa directory:');
+  ACDirPage.Values[0] := GetInstallationPath();
+end;
+
+function GetACPath(Param: String): string;
+begin
+ result :=  ACDirPage.Values[0];
+end;
+
+procedure WriteBatFile();
+var
+  lines : TArrayOfString;
+  Res : Boolean;
+begin
+  SetArrayLength(lines, 3);
+  lines[0] := 'set PYTHONPATH=' + ExpandConstant('{app}') + 'deps\python\';
+  lines[1] := 'python.exe "' + ExpandConstant('{app}') + 'export-as-mod.py"  --guess %1';
+  lines[2] := 'pause';
+  Res := SaveStringsToFile(ExpandConstant('{app}') + '\ModPackager.bat',lines,true);
+  MsgBox('writed  ' + ExpandConstant('{app}') + '\ModPackager.bat. result: ' + BoolToStr(Res), mbInformation, MB_OK);
+end;
