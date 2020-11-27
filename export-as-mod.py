@@ -57,6 +57,3 @@ main()
 # modFiles : vérifier dans cette méthode si les fichiers existent
 # chemins mis en paramètre : vérifier qu'ils existent
 # shaders spéciaux cf shutoko
-# rss formula  rss2 v6 : cm_texture.lua il y a des fonts dedans
-# trouver automatiquement le dossier AC avec ça : https://stackoverflow.com/questions/34090258/find-steam-games-folder
-# ou https://stackoverflow.com/questions/56576172/how-to-get-path-of-installation-of-target-game-application-from-registry-when-in

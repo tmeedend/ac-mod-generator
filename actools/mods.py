@@ -49,7 +49,7 @@ class ModTools(ABC):
         return common.cleanName(modVersionName)
 
     def packMod(self, mod, params, dir):
-        print('generating mod for mod ' + mod)
+        print('generating mod for ' + self.modType() + " " + mod)
         workdir = tempfile.mkdtemp()
         modspath = os.path.join(dir, 'content', self.modType() + 's')
         listfilename = os.path.join(workdir, mod + ".txt")
@@ -57,7 +57,7 @@ class ModTools(ABC):
         try:    
             modVersionName = self.extractModArchiveName(modPath)
         except Exception as e:
-            print("Cannot parse " + self.modType() + "_ui_json: ")
+            print("\tCannot parse " + self.modType() + "_ui_json: ")
             print(e)
             return
 
@@ -97,6 +97,9 @@ class ModTools(ABC):
 
     def packAllMods(self, params, dir):
         modspath = os.path.join(dir, 'content', self.modType() + 's')
+        if not os.path.isdir(modspath):
+            print("Error: Cannot find mod dir " + modspath)
+            return
         mods = os.listdir(modspath)
         for mod in mods:
             if not self.isKunosMod(mod):
