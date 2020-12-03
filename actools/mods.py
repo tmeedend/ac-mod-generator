@@ -76,9 +76,9 @@ class ModTools(ABC):
                 modNewestDate = common.getNewestFile(modPath)
                 if( modNewestDate > archiveDate):
                     override = True
-                    print("mod date is newer than archive date which is %s" % time.ctime(archiveDate))
+                    print("\tmod date is newer than archive date which is %s" % time.ctime(archiveDate))
                 else:
-                    print("Skipping archive override because mod date is older than archive date which is %s" % time.ctime(archiveDate))
+                    print("\tSkipping archive override because mod date is older than archive date which is %s" % time.ctime(archiveDate))
 
 
         listfile = open(listfilename, "x")

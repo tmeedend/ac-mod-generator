@@ -10,10 +10,10 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            //:"args":["--cars", "ag_subaru_impreza_wrx_tuned, a3dr_ferrari_512tr", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
+            //"args":["--cars", "#all","--tracks", "#all", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
             //    "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
-            //    "--update_mod_url", "--force_override"]
-            "args":["--archive", "D:/Downloads/Alfa Romeo 75 Milano by Mike Goulioumis v300520 (CSP) for AC v1.16.3.7z", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
+             //   "--update_mod_url", "--override_archives"]
+            "args":["--archive", "D:\\Downloads\\Monaco Rallycross DiRT3 v0.7 (by CHiQuiFReaKy).zip", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
                 "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
                 "--update_mod_url", "--force_override"]
         }

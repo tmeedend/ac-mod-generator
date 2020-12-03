@@ -21,7 +21,7 @@ def parseJson(jsonfilename):
 def getNewestFile(modPath):
 	list_of_files = glob.glob(modPath + '/**', recursive=True) 
 	latest_file = max(list_of_files, key=os.path.getmtime)
-	print('\tlatest file is ' + latest_file + " date: %s" % time.ctime(os.path.getctime(latest_file)))
+	# print('\tlatest file is ' + latest_file + " date: %s" % time.ctime(os.path.getctime(latest_file)))
 	return os.path.getctime(latest_file)
 
 def unzipFileToDir(sevenzipexec, archiveFile, destination):

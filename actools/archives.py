@@ -16,7 +16,7 @@ def findModName(finalModeDir, originalArchiveName):
 
     tracksDir = os.path.join(finalModeDir, 'content', 'tracks')
     if os.path.isdir(tracksDir):
-        tracklist = os.listdir()
+        tracklist = os.listdir(tracksDir)
     else:
         tracklist = []
     carsNumber = len(carslist)

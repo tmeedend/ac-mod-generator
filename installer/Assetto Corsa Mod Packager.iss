@@ -58,6 +58,8 @@ Root: HKCU; Subkey: "Software\Classes\directory\shell\Assetto Corsa Mod\command"
 
 [INI]
 Filename: {app}\configuration.ini; Section: SETTINGS; Key: ASSETTOCORSA_PATH; String: {code:GetACPath}
+Filename: {app}\configuration.ini; Section: SETTINGS; Key: 7ZIP_EXEC; String: {app}\deps\7zip\7z.exe
+Filename: {app}\configuration.ini; Section: SETTINGS; Key: QUICKBMS_EXE; String: {app}\deps\quickbms.exe
 
 
 [code]
@@ -113,9 +115,8 @@ var
   Res : Boolean;
 begin
   SetArrayLength(lines, 3);
-  lines[0] := 'set PYTHONPATH=' + ExpandConstant('{app}') + 'deps\python\';
-  lines[1] := 'python.exe "' + ExpandConstant('{app}') + 'export-as-mod.py"  --guess %1';
+  lines[0] := 'set PYTHONPATH=' + ExpandConstant('{app}') + '\deps\python\';
+  lines[1] := 'python.exe "' + ExpandConstant('{app}') + '\export-as-mod.py"  --guess %1';
   lines[2] := 'pause';
   Res := SaveStringsToFile(ExpandConstant('{app}') + '\ModPackager.bat',lines,true);
-  MsgBox('writed  ' + ExpandConstant('{app}') + '\ModPackager.bat. result: ' + BoolToStr(Res), mbInformation, MB_OK);
 end;
