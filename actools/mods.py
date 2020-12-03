@@ -49,7 +49,6 @@ class ModTools(ABC):
         return common.cleanName(modVersionName)
 
     def packMod(self, mod, params, dir):
-        print('generating mod for ' + self.modType() + " " + mod)
         workdir = tempfile.mkdtemp()
         modspath = os.path.join(dir, 'content', self.modType() + 's')
         listfilename = os.path.join(workdir, mod + ".txt")
@@ -76,11 +75,18 @@ class ModTools(ABC):
                 modNewestDate = common.getNewestFile(modPath)
                 if( modNewestDate > archiveDate):
                     override = True
-                    print("\tmod date is newer than archive date which is %s" % time.ctime(archiveDate))
+                   #  print("\tmod date is newer than archive date which is %s" % time.ctime(archiveDate))
                 else:
-                    print("\tSkipping archive override because mod date is older than archive date which is %s" % time.ctime(archiveDate))
+                    print("Skipping " + mod + " because mod date is older than archive date which is %s" % time.ctime(archiveDate))
+                    return
 
 
+        if os.path.isfile(archiveFile):
+            if not override:
+                print("Skipping mod " + mod + " because archive file " + archiveFile + " already exists.")
+                return
+
+        print('generating mod for ' + self.modType() + " " + mod)
         listfile = open(listfilename, "x")
 
         for fileToZip in self.modFiles(mod, dir):
