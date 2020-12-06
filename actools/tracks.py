@@ -4,6 +4,8 @@ from actools import common
 from actools import mods
 import urllib.parse
 import ntpath
+import json
+from array import array
 
 class TrackTools(mods.ModTools):
 
@@ -13,14 +15,51 @@ class TrackTools(mods.ModTools):
         mod_ui_json = os.path.join(modPath, 'ui', 'ui_' + self.modType() + '.json')
         jsonFile = None
         if os.path.isfile(mod_ui_json):
-            jsonFile = common.parseJson(mod_ui_json)
+            return common.parseJson(mod_ui_json)
         else:
             for layout in os.listdir(os.path.join(modPath, 'ui')):
                 if os.path.isdir(os.path.join(modPath, 'ui',layout)):
                     mod_ui_json = os.path.join(modPath, 'ui', layout, 'ui_' + self.modType() + '.json')
                     if os.path.isfile(mod_ui_json):
-                        jsonFile = common.parseJson(mod_ui_json)
-        return jsonFile
+                        return common.parseJson(mod_ui_json)
+
+    def addCspTags(self, modId, acpath, modPath):
+        tagsToAdd = []
+        configFiles = [
+            os.path.join(acpath, 'content',self.modType()  + 's', modId, 'extension', 'ext_config.ini'),
+            os.path.join(acpath, 'extension','config', self.modType()  + 's', modId + '.ini'),
+            os.path.join(acpath, 'extension', 'config', self.modType()  + 's', 'loaded', modId + '.ini')
+        ]
+        for configFile in configFiles:
+            if os.path.isfile(configFile):
+                config = common.readIniFile(configFile)
+                if(config.has_section('GRASS_FX')):
+                    tagsToAdd.append('grassfx')
+                if(config.has_section('RAIN_FX')):
+                    tagsToAdd.append('rainfx')
+                if(config.has_section('LIGHT_SERIES_1')):
+                    tagsToAdd.append('lightingfx')
+                if(common.fileContainsWord(configFile, 'SEASON_WINTER')):
+                    tagsToAdd.append('weatherfx')
+
+        mod_ui_json = os.path.join(modPath, 'ui', 'ui_' + self.modType() + '.json')
+        if os.path.isfile(mod_ui_json):
+            self.updateTagsIfNecessary(mod_ui_json, tagsToAdd)
+        else:
+            for layout in os.listdir(os.path.join(modPath, 'ui')):
+                if os.path.isdir(os.path.join(modPath, 'ui',layout)):
+                    mod_ui_json = os.path.join(modPath, 'ui', layout, 'ui_' + self.modType() + '.json')
+                    if os.path.isfile(mod_ui_json):
+                        self.updateTagsIfNecessary(mod_ui_json, tagsToAdd)
+
+    def updateTagsIfNecessary(self, mod_ui_json, tagsToAdd):
+            jsonData = common.parseJson(mod_ui_json)
+            newTags = list(set(jsonData['tags']) | set(tagsToAdd))
+            if len(newTags) > len(jsonData['tags']):
+                jsonData['tags'] = newTags
+                with open(mod_ui_json, "w", encoding='utf-8') as jsonOutput:
+                    json.dump(jsonData, jsonOutput, indent=2, ensure_ascii=False)
+                print("updated tags for ui track " + mod_ui_json)    
 
     def updateModUrlForAcServer(self, modDir, archiveName, urlPrefix, dir ):
         metadataFilePath = os.path.join(modDir, "ui", "meta_data.json")

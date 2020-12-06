@@ -18,6 +18,17 @@ def parseJson(jsonfilename):
 	except:
 		return json.loads(open(jsonfilename, encoding='utf-8-sig').read(), strict=False)
 
+def fileContainsWord(filePath, word):
+	try:
+		with open(filePath) as f:
+			if word in f.read():
+				return True
+	except:
+		with open(filePath, encoding='utf-8-sig') as f:
+			if word in f.read():
+				return True
+	return False
+
 def getNewestFile(modPath):
 	list_of_files = glob.glob(modPath + '/**', recursive=True) 
 	latest_file = max(list_of_files, key=os.path.getmtime)
@@ -29,10 +40,10 @@ def unzipFileToDir(sevenzipexec, archiveFile, destination):
 	runCommand(archiveCmd)
 
 def readIniFile(iniFile):
-	# some mods use /// to add comments, clean them as it would break the .ini parsing
-	for line in fileinput.input(iniFile, inplace=True):
-		line = re.sub('(.)*//(/)*','', line.rstrip())
-		print(line)
+	# some mods use /// (Race Sim Studio) to add comments, clean them as it would break the .ini parsing
+	# for line in fileinput.input(iniFile, inplace=True):
+	#	line = re.sub('(.)*//(/)+','', line.rstrip())
+	#	print(line)
 	try:
 		config = ConfigParser(strict=False, allow_no_value=True)
 		config.read(iniFile)

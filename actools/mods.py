@@ -36,6 +36,9 @@ class ModTools(ABC):
     def getUiJson(self, modDir):
         pass
 
+    def addCspTags(self, modId, acpath, modPath):
+        pass
+
     def extractModArchiveName(self, modDir):
         mod = ntpath.basename(modDir)
         jsonFile = self.getUiJson(modDir)
@@ -65,6 +68,12 @@ class ModTools(ABC):
         if params.updateModUrlForAcServer:
            self.updateModUrlForAcServer(modPath, modVersionName, self.modDownloadUrlPrefix(params), dir)
 
+        if params.addCspTags:
+            self.addCspTags(mod, dir, modPath)
+
+        if params.dontArchive:
+            return
+
         archiveFile = os.path.join(self.destination(params), modVersionName + '.7z')
         override=False
         if(params.forceOverride):
@@ -80,12 +89,10 @@ class ModTools(ABC):
                     print("Skipping " + mod + " because mod date is older than archive date which is %s" % time.ctime(archiveDate))
                     return
 
-
         if os.path.isfile(archiveFile):
             if not override:
                 print("Skipping mod " + mod + " because archive file " + archiveFile + " already exists.")
                 return
-
         print('generating mod for ' + self.modType() + " " + mod)
         listfile = open(listfilename, "x")
 
@@ -108,11 +115,12 @@ class ModTools(ABC):
             return
         mods = os.listdir(modspath)
         for mod in mods:
-            if not self.isKunosMod(mod):
+            if not self.isKunosMod(mod) or not params.skipKunosMods:
                 try:
                     self.packMod(mod, params, dir)
-                except:
+                except Exception as e:
                     print("Error while generating mod " + mod)
+                    print(e)
             else:
                 print("Skipping kunos mod " + mod)
 

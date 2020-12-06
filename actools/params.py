@@ -17,7 +17,10 @@ class Params:
 	archiveToProcess = None
 	tracksDestination = None
 	carsDestination = None
+	addCspTags = False
 	updateModUrlForAcServer = False
+	skipKunosMods = False
+	dontArchive = False
 	carDownloadUrlPrefix=""
 	trackDownloadUrlPrefix=""
 	overrideArchives=False
@@ -81,8 +84,11 @@ class Params:
 
 		argsparser = argparse.ArgumentParser(description='Build/clean Assetto Corsa mods from mods archives or folders')
 		argsparser.add_argument('-g','--guess', help='Try to guess what is the file given as parameter and process it (an archive, a mod, a track or a car folder)', required=False)
+		argsparser.add_argument('-da','--dont_archive', action='store_true', help='Don''t generate archives for mods. IT will only create/update json files if requested', required=False)
 		argsparser.add_argument('-u','--update_mod_url', action='store_true', help='Generate the meta_data.json needed for acServer or update ui_car.json', required=False)
+		argsparser.add_argument('-act','--add_csp_tags', action='store_true', help='Add rainfx, weatherfx and grassfx tags to tracks if they have these specifics configs', required=False)
 		argsparser.add_argument('-f','--force_override', action='store_true', help='If an archive already exists in the destination folder, it will be overriden, no matter the dates', required=False)
+		argsparser.add_argument('-s','--skip_kunos_mods', action='store_true', help='Skip kunos mods when using #all for tracks or cars', required=False)
 		argsparser.add_argument('-o','--override_archives', action='store_true', help='If an archive already exists in the destination folder, it will be overriden if the mod has a newer file than the archive to override', required=False)
 		argsparser.add_argument('-tu','--track_url_prefix', help='The URL prefix to write into the acServer meta_data.json file for tracks, for the url field', required=False)
 		argsparser.add_argument('-cu','--car_url_prefix', help='The URL prefix to write into the acServer meta_data.json file for cars, for the url field', required=False)
@@ -94,7 +100,10 @@ class Params:
 		args = vars(argsparser.parse_args())
 
 		self.updateModUrlForAcServer = self.argValueOrFalse(args, 'update_mod_url')
+		self.addCspTags = self.argValueOrFalse(args, 'add_csp_tags')
 		self.forceOverride = self.argValueOrFalse(args, 'force_override')
+		self.skipKunosMods = self.argValueOrFalse(args, 'skip_kunos_mods')
+		self.dontArchive = self.argValueOrFalse(args, 'dont_archive')
 		self.overrideArchives = self.argValueOrFalse(args, 'override_archives')
 		self.trackDownloadUrlPrefix = self.argValueOrNone(args, 'track_url_prefix')
 		self.carDownloadUrlPrefix = self.argValueOrNone(args, 'car_url_prefix')
@@ -104,8 +113,6 @@ class Params:
 		self.carsToProcess = self.argValueOrNone(args, 'cars')
 		self.archiveToProcess = self.argValueOrNone(args, 'archive')
 		self.guessToProcess = self.argValueOrNone(args, 'guess')
-
-		
 
 		if self.tracksDestination == None or self.tracksDestination == "":
 			self.tracksDestination = os.getcwd()
