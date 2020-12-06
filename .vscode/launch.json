@@ -10,12 +10,18 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            //"args":["--cars", "#all","--tracks", "#all", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
-            //    "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
-             //   "--update_mod_url", "--override_archives"]
-            "args":["--archive", "D:\\Downloads\\Monaco Rallycross DiRT3 v0.7 (by CHiQuiFReaKy).zip", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
+           // "args":["--tracks", "#all", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
+           //     "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
+           //    "--add_csp_tags","--dont_archive"
+           // , "--override_archives",
+            "args":["--cars", "#all","--tracks", "#all", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
                 "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
-                "--update_mod_url", "--force_override"]
+               "--update_mod_url", "--skip_kunos_mods"
+              // , "--override_archives", "--skip_kunos_mods"
+            ]
+            //"args":["--archive", "D:\\Downloads\\Monaco Rallycross DiRT3 v0.7 (by CHiQuiFReaKy).zip", "--tracks_destination", "D:/Games/ac-mods/tracks", "--cars_destination", "D:/Games/ac-mods/cars", 
+            //    "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
+            //    "--update_mod_url", "--force_override", "--skip_kunos_mods"]
         }
     ]
 }
