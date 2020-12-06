@@ -38,7 +38,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 
 [Files]
-Source: "..\deps\*"; DestDir: "{app}\deps\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\deps\*"; DestDir: "{app}\deps\"; Flags: ignoreversion recursesubdirs createallsubdirs  
+Source: "..\examples\*"; DestDir: "{app}\examples\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\export-as-mod.py"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\configuration.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
@@ -114,9 +115,9 @@ var
   lines : TArrayOfString;
   Res : Boolean;
 begin
-  SetArrayLength(lines, 3);
-  lines[0] := 'set PYTHONPATH=' + ExpandConstant('{app}') + '\deps\python\';
-  lines[1] := 'python.exe "' + ExpandConstant('{app}') + '\export-as-mod.py"  --guess %1';
-  lines[2] := 'pause';
-  Res := SaveStringsToFile(ExpandConstant('{app}') + '\ModPackager.bat',lines,true);
+  SetArrayLength(lines, 3);      
+  lines[0] := '@echo off';              
+  lines[1] := 'set ACMPPATH=' + ExpandConstant('{app}');
+  lines[2] := 'set PYTHONPATH=' + ExpandConstant('{app}') + '\deps\python\';
+  Res := SaveStringsToFile(ExpandConstant('{app}') + '\env.bat',lines,true);
 end;
