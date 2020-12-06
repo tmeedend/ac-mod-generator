@@ -4,7 +4,7 @@ This tool has 2 main purposes:
  * Add a contextual menu item when you right click on a file with windows explorer to generate a valid mod archive. When doing it from an installed mod, it will identify all the files needed by the mod, not only the folder itself (fonts, drivers, etc.). Archives will be generated in the current directory or your desktop if the current directory is not writable.
  
 Keep in mind that it's still a work in progress app:
- * make backups of your mods before using it. Be careful with the option which update all your tracks tags, although I have tested it on all my tracks.
+ * make backups of your mods before using it. Be careful with the option which update all your tracks tags, although I have tested it on all my tracks without any problems.
  * give feedback if something does not work so I can fix it. I tried to identify all the files needed by a mod, but if you have identified something missing, don't hesitate to report it.
 
 ## Prerequirements
