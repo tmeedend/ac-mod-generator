@@ -1,6 +1,7 @@
 # Assetto Corsa Mod Packager
 This tool has 2 main purposes:
- * Help you manage your mods automatically with a command line program
+ * Help you extract archives of your mods automatically with a command line program.
+ * Update automatically information on your mods, for example by adding specific tags to tracks that support CSP effects (currently, it can add these tags: rainfx, lightingfx, weatherfx, grassfx). 
  * Add a contextual menu item when you right click on a file with windows explorer to generate a valid mod archive. When doing it from an installed mod, it will identify all the files needed by the mod, not only the folder itself (fonts, drivers, etc.). Archives will be generated in the current directory or your desktop if the current directory is not writable.
  
 Keep in mind that it's still a work in progress app:
