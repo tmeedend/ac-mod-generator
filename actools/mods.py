@@ -39,6 +39,7 @@ class ModTools(ABC):
     def addCspTags(self, modId, acpath, modPath):
         pass
 
+    # extract the mod filename to generate from it's directory
     def extractModArchiveName(self, modDir):
         mod = ntpath.basename(modDir)
         jsonFile = self.getUiJson(modDir)
@@ -49,7 +50,7 @@ class ModTools(ABC):
             modVersionName += " " + modVersion
         if not modAuthor == None:
             modVersionName += " by " + modAuthor
-        return common.cleanName(modVersionName)
+        return common.cleanName(modVersionName, True)
 
     def packMod(self, mod, params, dir):
         workdir = tempfile.mkdtemp()
@@ -59,7 +60,7 @@ class ModTools(ABC):
         try:    
             modVersionName = self.extractModArchiveName(modPath)
         except Exception as e:
-            print("\tCannot parse " + self.modType() + "_ui_json: ")
+            print("\tCannot parse " + self.modType() + " " + mod + " _ui_json: ")
             print(e)
             return
 
@@ -76,24 +77,25 @@ class ModTools(ABC):
 
         archiveFile = os.path.join(self.destination(params), modVersionName + '.7z')
         override=False
-        if(params.forceOverride):
-            override = True
-        elif params.overrideArchives:
-            if os.path.isfile(archiveFile):
+        if os.path.isfile(archiveFile):   
+            if(params.forceOverride):
+                override = True
+                print('generating mod ' + self.modType() + " " + mod + " and force overriding old archive")
+            elif params.overrideArchives:
                 archiveDate = os.path.getctime(archiveFile)
                 modNewestDate = common.getNewestFile(modPath)
                 if( modNewestDate > archiveDate):
                     override = True
-                   #  print("\tmod date is newer than archive date which is %s" % time.ctime(archiveDate))
+                    print('generating mod ' + self.modType() + " " + mod + " because mod is newer than archive (%s > %s)" % (time.ctime(modNewestDate), time.ctime(archiveDate)))
                 else:
-                    print("Skipping " + mod + " because mod date is older than archive date which is %s" % time.ctime(archiveDate))
+                    # print("Skipping " + mod + " because mod date is older than archive date which is %s" % time.ctime(archiveDate))
                     return
-
-        if os.path.isfile(archiveFile):
-            if not override:
-                print("Skipping mod " + mod + " because archive file " + archiveFile + " already exists.")
+            else:
+                # print("Skipping mod " + mod + " because archive file " + archiveFile + " already exists.")
                 return
-        print('generating mod for ' + self.modType() + " " + mod)
+        else:
+            print('generating mod ' + self.modType() + " " + mod)
+
         listfile = open(listfilename, "x")
 
         for fileToZip in self.modFiles(mod, dir):

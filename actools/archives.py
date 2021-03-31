@@ -1,4 +1,4 @@
-import os
+import glob, os
 import tempfile
 from actools import common
 import shutil
@@ -39,12 +39,12 @@ def isMod(dir):
         return False
     for filename in os.listdir(dir):
         file = os.path.join(dir, filename)
-        if os.path.isdir(file) and filename == 'content':
+        if os.path.isdir(file) and (filename == 'content' or filename == 'extension'):
             return True
     return False 
 
 def isTrack(dir):
-    if not os.path.isdir(dir):
+    if not os.path.isdir(os.path.join(dir, 'ui')):
         return False
     if os.path.isfile(os.path.join(dir, 'ui', 'ui_track.json')):
         return True
@@ -61,6 +61,12 @@ def isCar(dir):
         return False
     return os.path.isfile(os.path.join(dir, 'ui', 'ui_car.json'))
 
+def isCarSound(dir):
+    bankFiles = os.path.join(dir, '"*.bank"')
+    if not os.path.isdir(dir) or len(glob.glob(bankFiles)) < 0:
+        return False
+    return os.path.isfile(os.path.join(dir, 'GUIDs.txt'))
+
 def appendMod(dir, newModDir, type):
     if type == 'MOD':
         for subdirname in os.listdir(dir):
@@ -74,15 +80,41 @@ def appendMod(dir, newModDir, type):
         carsPath = os.path.join(newModDir, 'content', 'cars')
         os.makedirs(carsPath, exist_ok= True)
         shutil.move(dir,carsPath)
+    elif  type == 'SOUND':
+        bankFile = glob.glob("*.bank")
+        carname = ntpath.basename(bankFile[0])
+        soundPath = os.path.join(newModDir, 'content', 'cars', carname, 'sfx')
+        os.makedirs(soundPath, exist_ok= True)
+        shutil.move(dir,soundPath)
 
 def archiveValidMod(params, newModDir, originalName):
-        finalArchiveName = findModName(newModDir, originalName) + '.7z'
-        if os.access(os.getcwd(), os.W_OK):
-            destArchive = os.path.join(os.getcwd(), finalArchiveName)
-        else:
-            destArchive = os.path.join(os.environ["HOMEPATH"], "Desktop", finalArchiveName)
-        print("\tCreating mod archive " + destArchive)
-        common.zipFileToDir(params.sevenzipexec, newModDir, destArchive, None, params.forceOverride, None)
+    finalModName =  findModName(newModDir, originalName)
+    finalArchiveName = finalModName + '.7z'
+    if os.access(os.getcwd(), os.W_OK):
+        destArchive = os.path.join(os.getcwd(), finalArchiveName)
+    else:
+        destArchive = os.path.join(os.environ["HOMEPATH"], "Desktop", finalArchiveName)
+    common.zipFileToDir(params.sevenzipexec, newModDir, destArchive, None, params.forceOverride, None)
+
+
+def installMods(params, newModDir, originalName):
+    soundModsFound = False
+    for subdirname in os.listdir(newModDir):
+        if str.startswith(subdirname, 'sound_'):
+            print("\tInstalling sound mod " + subdirname)
+            shutil.move(os.path.join(newModDir, subdirname), params.acmodspath)
+            soundModsFound = True
+    if soundModsFound == False:
+        finalModName =  findModName(newModDir, originalName)
+        modInstallDir = os.path.join(params.acmodspath, finalModName)
+        if(os.path.isdir(modInstallDir)):
+            print('Mod ' + finalModName + ' already exists in ' + params.acmodspath)
+            return
+        os.makedirs(modInstallDir, exist_ok= False)
+        # move all files into the install mod dir
+        file_names = os.listdir(newModDir)
+        for file_name in file_names:
+            shutil.move(os.path.join(newModDir, file_name), modInstallDir)
 
 
 def transformToValidMod(params, archiveToProcess):
@@ -92,25 +124,36 @@ def transformToValidMod(params, archiveToProcess):
             return
     else:
         return
-
+    # create a tmp work dir and unzip the archive to process inside
     workdir = tempfile.mkdtemp()
     common.unzipFileToDir(params.sevenzipexec, archiveToProcess, workdir)
+    
+    # create a dir where we will put the mod once it has the good structure
     newModDir = tempfile.mkdtemp()
-    foundSomething = False
-    if isMod(workdir):
+
+    # try to find mods in the extracted files
+    recursiveMoveModsToValidModDir(workdir, newModDir, ntpath.basename(archiveToProcess))
+
+    # if the generated mod dir is not empty, we have found a mod, we can process it
+    if len(os.listdir(newModDir) ) > 0:
+        installMods(params, newModDir, ntpath.basename(archiveToProcess))
+    else:
+        print("No mod found")
+
+def recursiveMoveModsToValidModDir(workdir, newModDir, currentDirName):
+    # first we check if the first dir level is a mod
+    if isTrack(workdir):
+        appendMod(workdir, newModDir, 'TRACK')
+    elif isCar(workdir):
+        appendMod(workdir, newModDir, 'CAR')
+    elif isCarSound(workdir):
+        newSoundDir = os.path.join(newModDir, 'sound_' + currentDirName)
+        appendMod(workdir, newSoundDir, 'SOUND')
+    elif isMod(workdir):
         appendMod(workdir, newModDir, 'MOD')
-        foundSomething = True
+
+    #if not we try to find it in subdirs
     else:
         for filename in os.listdir(workdir):
             file = os.path.join(workdir, filename)
-            if isMod(file):
-                appendMod(file, newModDir, 'MOD')
-                foundSomething = True
-            elif isTrack(file):
-                appendMod(file, newModDir, 'TRACK')
-                foundSomething = True
-            elif isCar(file):
-                appendMod(file, newModDir, 'CAR')
-                foundSomething = True
-    if foundSomething:
-        archiveValidMod(params, newModDir, ntpath.basename(archiveToProcess))
+            recursiveMoveModsToValidModDir(file, newModDir, filename)

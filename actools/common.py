@@ -8,9 +8,12 @@ import re
 import fileinput
 from configparser import ConfigParser
 
-def cleanName(name):
+def cleanName(name, replaceSpacesByUnderscores):
 	remove_punctuation_map = dict((ord(char), None) for char in '\/*?:"<>|')
-	return name.translate(remove_punctuation_map)
+	withoutPonctuation = name.translate(remove_punctuation_map)
+	if replaceSpacesByUnderscores:
+		return withoutPonctuation.replace(" ", "_")
+	return withoutPonctuation
 
 def parseJson(jsonfilename):
 	try:

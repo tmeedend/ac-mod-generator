@@ -11,6 +11,7 @@ class Params:
 
 	sevenzipexec = None
 	acpath = None
+	acmodspath = None
 	quickbmsexec = None
 	tracksToProcess = None
 	carsToProcess = None
@@ -25,6 +26,7 @@ class Params:
 	trackDownloadUrlPrefix=""
 	overrideArchives=False
 	forceOverride=False
+	clean=False
 	guessToProcess=None
 	appDir = None
 
@@ -71,6 +73,7 @@ class Params:
 			sys.exit("Cannot read actools config file. Exiting") 
 		self.sevenzipexec = self.properAbsPath(self.readMandatoryConfigField(configIniFile, '7ZIP_EXEC'))
 		self.acpath = self.properAbsPath(self.readMandatoryConfigField(configIniFile, 'ASSETTOCORSA_PATH'))
+		self.acmodspath = self.properAbsPath(self.readMandatoryConfigField(configIniFile, 'MODS_PATH'))
 		self.quickbmsexec = self.readMandatoryConfigField(configIniFile, 'QUICKBMS_EXE')
 		if self.quickbmsexec != None:
 			self.quickbmsexec = self.properAbsPath(self.quickbmsexec)
@@ -97,6 +100,7 @@ class Params:
 		argsparser.add_argument('-t','--tracks', help='The name of the tracks to archive from the assetto corsa install dir. If the value is #all, it will archive all the tracks.', required=False)
 		argsparser.add_argument('-c','--cars', help='The name of the tracks to archive from the assetto corsa install dir. If the value is #all, it will archive all the cars.', required=False)
 		argsparser.add_argument('-a','--archive', help='The path to a mod archive to transform to a good mod structure that can be enabled/disabled by Content Manager', required=False)
+		argsparser.add_argument('-x','--clean', action='store_true', help='Remove from your assetto corsa content, any invalid track or car (meaning without ui information)', required=False)
 		args = vars(argsparser.parse_args())
 
 		self.updateModUrlForAcServer = self.argValueOrFalse(args, 'update_mod_url')
@@ -104,6 +108,7 @@ class Params:
 		self.forceOverride = self.argValueOrFalse(args, 'force_override')
 		self.skipKunosMods = self.argValueOrFalse(args, 'skip_kunos_mods')
 		self.dontArchive = self.argValueOrFalse(args, 'dont_archive')
+		self.clean = self.argValueOrFalse(args, 'clean')
 		self.overrideArchives = self.argValueOrFalse(args, 'override_archives')
 		self.trackDownloadUrlPrefix = self.argValueOrNone(args, 'track_url_prefix')
 		self.carDownloadUrlPrefix = self.argValueOrNone(args, 'car_url_prefix')
