@@ -154,6 +154,7 @@ def recursiveMoveModsToValidModDir(workdir, newModDir, currentDirName):
 
     #if not we try to find it in subdirs
     else:
-        for filename in os.listdir(workdir):
-            file = os.path.join(workdir, filename)
-            recursiveMoveModsToValidModDir(file, newModDir, filename)
+        if os.path.isdir(workdir):
+            for filename in os.listdir(workdir):
+                file = os.path.join(workdir, filename)
+                recursiveMoveModsToValidModDir(file, newModDir, filename)

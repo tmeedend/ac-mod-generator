@@ -33,10 +33,11 @@ def fileContainsWord(filePath, word):
 	return False
 
 def getNewestFile(modPath):
-	list_of_files = glob.glob(modPath + '/**', recursive=True) 
+	list_of_files = [result for result in glob.glob(modPath + '/**', recursive=True)  if not os.path.isdir(result) 
+	and not result.endswith("meta_data.json") and not result.endswith("ui_car.json")  and not result.endswith("ui_track.json") and not result.endswith("payloads.bin") ]
 	latest_file = max(list_of_files, key=os.path.getmtime)
-	# print('\tlatest file is ' + latest_file + " date: %s" % time.ctime(os.path.getctime(latest_file)))
-	return os.path.getctime(latest_file)
+	#print('\tlatest file is ' + latest_file + " date: %s" % time.ctime(os.path.getmtime(latest_file)))
+	return os.path.getmtime(latest_file)
 
 def unzipFileToDir(sevenzipexec, archiveFile, destination):
 	archiveCmd = sevenzipexec + ' x "' + archiveFile + '" -o"' + destination + '"'

@@ -39,6 +39,16 @@ class ModTools(ABC):
     def addCspTags(self, modId, acpath, modPath):
         pass
 
+    def findModsWithTag(self, acpath, tagsToFind):
+        pass
+
+    def tagsInJson(self, file, tagsToFind):
+        try:
+            jsonData = common.parseJson(file)
+            return len(set(jsonData['tags']) & set(tagsToFind)) > 0
+        except:
+            return False
+
     # extract the mod filename to generate from it's directory
     def extractModArchiveName(self, modDir):
         mod = ntpath.basename(modDir)
@@ -82,7 +92,7 @@ class ModTools(ABC):
                 override = True
                 print('generating mod ' + self.modType() + " " + mod + " and force overriding old archive")
             elif params.overrideArchives:
-                archiveDate = os.path.getctime(archiveFile)
+                archiveDate = os.path.getmtime(archiveFile)
                 modNewestDate = common.getNewestFile(modPath)
                 if( modNewestDate > archiveDate):
                     override = True

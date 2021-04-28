@@ -19,8 +19,14 @@ def processMod(paramsToUse, modTool, modsToProcess):
 		if modsToProcess == "#all":
 			modTool.packAllMods(paramsToUse, paramsToUse.acpath)
 		else:
-			for mod in modsToProcess.split(","):
-				modTool.packMod(mod.strip(), paramsToUse, paramsToUse.acpath)
+			if modsToProcess.startswith("tags:"):
+				tags = modsToProcess.split("tags:")[1].split(',')
+				mods = modTool.findModsWithTag(paramsToUse.acpath, tags)
+			else:
+				mods = modsToProcess.split(",")
+			for mod in mods:
+				if not modTool.isKunosMod(mod) or not paramsToUse.skipKunosMods:
+					modTool.packMod(mod.strip(), paramsToUse, paramsToUse.acpath)
 	
 
 def main():
@@ -53,12 +59,24 @@ def main():
 		else:
 			print("Cannot guess what kind of mod this file is: " + paramsToUse.guessToProcess)
 	else:
-		processMod(paramsToUse, tracks.TrackTools(paramsToUse.sevenzipexec, paramsToUse.quickbmsexec), paramsToUse.tracksToProcess)
-		processMod(paramsToUse, cars.CarTools(paramsToUse.sevenzipexec, paramsToUse.quickbmsexec), paramsToUse.carsToProcess)
+		trackTools = tracks.TrackTools(paramsToUse.sevenzipexec, paramsToUse.quickbmsexec)
+		carTools = cars.CarTools(paramsToUse.sevenzipexec, paramsToUse.quickbmsexec)
+		processMod(paramsToUse, trackTools, paramsToUse.tracksToProcess)
+		processMod(paramsToUse, carTools, paramsToUse.carsToProcess)
 		archives.transformToValidMod(paramsToUse, paramsToUse.archiveToProcess)
 		if(paramsToUse.clean):
+			if input("This will delete any car or track inside " + paramsToUse.acpath + " without a 'ui' directory. Are you sure? (y/n)") != "y":
+				exit()
 			clean.cleanCars(paramsToUse.acpath)
 			clean.cleanTracks(paramsToUse.acpath)
+		if paramsToUse.findTracksByTags  != None:
+			foundTracks = trackTools.findModsWithTag(paramsToUse.acpath, paramsToUse.findTracksByTags.split(','))
+			for track in foundTracks:
+				print(track)
+		if paramsToUse.findCarsByTags  != None:
+			foundCars = carTools.findModsWithTag(paramsToUse.acpath, paramsToUse.findCarsByTags.split(','))
+			for car in foundCars:
+				print(car)
 
 main()
 # modFiles : vérifier dans cette méthode si les fichiers existent

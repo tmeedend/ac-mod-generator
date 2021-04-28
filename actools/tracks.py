@@ -23,6 +23,36 @@ class TrackTools(mods.ModTools):
                     if os.path.isfile(mod_ui_json):
                         return common.parseJson(mod_ui_json)
 
+    def findModsWithTag(self, acdir, tagsToFind):
+        foundTracks = []
+        modspath = os.path.join(acdir, 'content', 'tracks')
+        if not os.path.isdir(modspath):
+            print("Error: Cannot find tracks dir " + modspath)
+            return
+        tracks = os.listdir(modspath)
+        for track in tracks:
+            modPath = os.path.join(modspath, track)
+            mod_ui_json = os.path.join(modPath, 'ui', 'ui_' + self.modType() + '.json')
+            if os.path.isfile(mod_ui_json):
+                if self.tagsInJson(mod_ui_json, tagsToFind):
+                    foundTracks.append(track)
+            else:
+                try:
+                    for layout in os.listdir(os.path.join(modPath, 'ui')):
+                        if os.path.isdir(os.path.join(modPath, 'ui',layout)):
+                            mod_ui_json = os.path.join(modPath, 'ui', layout, 'ui_' + self.modType() + '.json')
+                            if os.path.isfile(mod_ui_json):
+                                if self.tagsInJson(mod_ui_json, tagsToFind):
+                                    foundTracks.append(track)
+                                    break
+                except:
+                    print("ERROR: invalid track " + track)
+        return foundTracks
+
+
+
+
+
     def addCspTags(self, modId, acpath, modPath):
         tagsToAdd = []
         configFiles = [

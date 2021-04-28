@@ -24,6 +24,8 @@ class Params:
 	dontArchive = False
 	carDownloadUrlPrefix=""
 	trackDownloadUrlPrefix=""
+	findTracksByTags=""
+	findCarsByTags=""
 	overrideArchives=False
 	forceOverride=False
 	clean=False
@@ -100,7 +102,10 @@ class Params:
 		argsparser.add_argument('-t','--tracks', help='The name of the tracks to archive from the assetto corsa install dir. If the value is #all, it will archive all the tracks.', required=False)
 		argsparser.add_argument('-c','--cars', help='The name of the tracks to archive from the assetto corsa install dir. If the value is #all, it will archive all the cars.', required=False)
 		argsparser.add_argument('-a','--archive', help='The path to a mod archive to transform to a good mod structure that can be enabled/disabled by Content Manager', required=False)
-		argsparser.add_argument('-x','--clean', action='store_true', help='Remove from your assetto corsa content, any invalid track or car (meaning without ui information)', required=False)
+		argsparser.add_argument('-x','--clean', action='store_true', help='Remove from your assetto corsa content, any invalid track or car (meaning without ui information for cars, or less than 2 dirs for tracks)', required=False)
+		argsparser.add_argument('-ft','--find_tracks_by_tags', help='Find tracks with the specified tags and write then in the std output', required=False)
+		argsparser.add_argument('-fc','--find_cars_by_tags', help='Find cars with the specified tags and write then in the std output', required=False)
+
 		args = vars(argsparser.parse_args())
 
 		self.updateModUrlForAcServer = self.argValueOrFalse(args, 'update_mod_url')
@@ -113,6 +118,8 @@ class Params:
 		self.trackDownloadUrlPrefix = self.argValueOrNone(args, 'track_url_prefix')
 		self.carDownloadUrlPrefix = self.argValueOrNone(args, 'car_url_prefix')
 		self.tracksDestination = self.argPathOrNone(args, 'tracks_destination')
+		self.findTracksByTags = self.argPathOrNone(args, 'find_tracks_by_tags')
+		self.findCarsByTags = self.argPathOrNone(args, 'find_cars_by_tags')
 		self.carsDestination = self.argPathOrNone(args, 'cars_destination')
 		self.tracksToProcess = self.argValueOrNone(args, 'tracks')
 		self.carsToProcess = self.argValueOrNone(args, 'cars')

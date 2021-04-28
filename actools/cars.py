@@ -212,6 +212,21 @@ class CarTools(mods.ModTools):
     def modDownloadUrlPrefix(self, params):
         return params.carDownloadUrlPrefix
 
+    def findModsWithTag(self, acdir, tagsToFind):
+        foundCars = []
+        modspath = os.path.join(acdir, 'content', 'cars')
+        if not os.path.isdir(modspath):
+            print("Error: Cannot find cars dir " + modspath)
+            return
+        cars = os.listdir(modspath)
+        for car in cars:
+            modPath = os.path.join(modspath, car)
+            mod_ui_json = os.path.join(modPath, 'ui', 'ui_' + self.modType() + '.json')
+            if os.path.isfile(mod_ui_json):
+                if self.tagsInJson(mod_ui_json, tagsToFind):
+                    foundCars.append(car)
+        return foundCars
+
     def modFiles(self, modId, acpath):
         filesArray = [
         # mod main folder
