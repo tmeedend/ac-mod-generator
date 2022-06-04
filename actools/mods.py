@@ -61,6 +61,20 @@ class ModTools(ABC):
         if not modAuthor == None:
             modVersionName += " by " + modAuthor
         return common.cleanName(modVersionName, True)
+    # extract the mod filename to generate from it's directory
+
+    def extractModArchiveTitle(self, modDir):
+        mod = ntpath.basename(modDir)
+        jsonFile = self.getUiJson(modDir)
+        modName = jsonFile['name'] if 'name' in jsonFile else mod.capitalize()
+        modAuthor = jsonFile['author'] if 'author' in jsonFile else None
+        modYear = jsonFile['year'] if 'year' in jsonFile else None
+        modVersionName = self.modType().capitalize() + " - " + modName
+        if not modYear == None:
+            modVersionName += " - " + str(modYear)
+        if not modAuthor == None:
+            modVersionName += " (" + modAuthor + ")"
+        return common.cleanName(modVersionName, False)
 
     def packMod(self, mod, params, dir):
         workdir = tempfile.mkdtemp()

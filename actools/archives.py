@@ -7,7 +7,7 @@ from actools import tracks
 from actools import cars
 
 
-def findModName(finalModeDir, originalArchiveName):
+def findModName(finalModeDir, originalArchiveName, title = False):
     carsDir = os.path.join(finalModeDir, 'content', 'cars')
     if os.path.isdir(carsDir):
         carslist = os.listdir(carsDir)
@@ -26,11 +26,18 @@ def findModName(finalModeDir, originalArchiveName):
         return os.path.splitext(originalArchiveName)[0]
     if carsNumber > 0:
         if carsNumber == 1:
-            return (cars.CarTools(None, None)).extractModArchiveName(os.path.join(carsDir, carslist[0]))
+            if title:
+                return (cars.CarTools(None, None)).extractModArchiveTitle(os.path.join(carsDir, carslist[0]))
+            else:
+                return (cars.CarTools(None, None)).extractModArchiveName(os.path.join(carsDir, carslist[0]))
 
     elif tracksNumber > 0:
         if tracksNumber == 1:
-            return (tracks.TrackTools(None, None)).extractModArchiveName(os.path.join(tracksDir, tracklist[0]))
+            if title:
+                return (tracks.TrackTools(None, None)).extractModArchiveTitle(os.path.join(tracksDir, tracklist[0]))
+                return 
+            else:
+                return (tracks.TrackTools(None, None)).extractModArchiveName(os.path.join(tracksDir, tracklist[0]))
 
     return os.path.splitext(originalArchiveName)[0]
 
@@ -105,17 +112,17 @@ def installMods(params, newModDir, originalName):
             shutil.move(os.path.join(newModDir, subdirname), params.acmodspath)
             soundModsFound = True
     if soundModsFound == False:
-        finalModName =  findModName(newModDir, originalName)
+        finalModName =  findModName(newModDir, originalName, True)
         modInstallDir = os.path.join(params.acmodspath, finalModName)
         if(os.path.isdir(modInstallDir)):
-            print('Mod ' + finalModName + ' already exists in ' + params.acmodspath)
-            return
-        os.makedirs(modInstallDir, exist_ok= False)
+            print('Replacing mod ' + finalModName + ' because it already exists in ' + params.acmodspath)
+            if os.path.isdir(os.path.join(modInstallDir, "content")):
+                shutil.rmtree(os.path.join(modInstallDir, "content"))
+        os.makedirs(modInstallDir, exist_ok= True)
         # move all files into the install mod dir
         file_names = os.listdir(newModDir)
         for file_name in file_names:
             shutil.move(os.path.join(newModDir, file_name), modInstallDir)
-
 
 def transformToValidMod(params, archiveToProcess):
     if not archiveToProcess == None:

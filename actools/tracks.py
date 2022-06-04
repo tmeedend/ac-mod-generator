@@ -52,6 +52,14 @@ class TrackTools(mods.ModTools):
 
 
 
+    def getSkins(self, modpath):
+        skins = os.path.join(modpath,"skins", "cm_skins")
+        skinsTab = []
+        if os.path.isdir(skins):
+            for skin in os.listdir(skins):
+                if os.path.isdir(os.path.join(skins, skin)):
+                    skinsTab.append(skin)
+        return skinsTab
 
     def addCspTags(self, modId, acpath, modPath):
         tagsToAdd = []
@@ -71,6 +79,9 @@ class TrackTools(mods.ModTools):
                     tagsToAdd.append('lightingfx')
                 if(common.fileContainsWord(configFile, 'SEASON_WINTER')):
                     tagsToAdd.append('weatherfx')
+        skins = self.getSkins(modPath)
+        if(len(skins) > 0):
+            tagsToAdd.append('has-skins')
 
         mod_ui_json = os.path.join(modPath, 'ui', 'ui_' + self.modType() + '.json')
         if os.path.isfile(mod_ui_json):
