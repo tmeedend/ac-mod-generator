@@ -17,7 +17,7 @@ def cleanName(name, replaceSpacesByUnderscores):
 
 def parseJson(jsonfilename):
 	try:
-		return json.loads(open(jsonfilename, strict=False).read(), strict=False)
+		return json.loads(open(jsonfilename).read(), strict=False)
 	except:
 		return json.loads(open(jsonfilename, encoding='utf-8-sig').read(), strict=False)
 
