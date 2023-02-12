@@ -118,6 +118,10 @@ def installMods(params, newModDir, originalName):
             print('Replacing mod ' + finalModName + ' because it already exists in ' + params.acmodspath)
             if os.path.isdir(os.path.join(modInstallDir, "content")):
                 shutil.rmtree(os.path.join(modInstallDir, "content"))
+            if os.path.isdir(os.path.join(modInstallDir, "extension")):
+                shutil.rmtree(os.path.join(modInstallDir, "extension"))
+            if os.path.isdir(os.path.join(modInstallDir, "system")):
+                shutil.rmtree(os.path.join(modInstallDir, "system"))
         os.makedirs(modInstallDir, exist_ok= True)
         # move all files into the install mod dir
         file_names = os.listdir(newModDir)
