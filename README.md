@@ -15,6 +15,10 @@ Keep in mind that it's still a work in progress app:
 * Windows 10
 * Python 3.9
 * 7zip
+* QUICKBMS
+
+## How to install
+I have created an installer but I didn't share it for the moment (ask me if you want to help me and test it) The installer adds a contextual menu: when you right click on an archive, a new item "install mod" will unpack the mod your assetto corsa mod folder. Without the installer, you will have to open the configuration.ini file and change the properties inside. Basically, you will have to change the paths accordingly to your environment (where are 7zip, Python, Quickbms and you Assetto Corsa folder).
 
 ## Available examples for the command line
 To use the command line, you will need basic knowledge of the windows command line
