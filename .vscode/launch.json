@@ -10,17 +10,17 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args":["--tracks", "tags:online", "--tracks_destination", "D:/Games/ac-mods-archives/tracks", "--cars_destination", "D:/Games/ac-mods-archives/cars", 
-                "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
-           //    "--add_csp_tags","--dont_archive"
+            //"args":["--tracks", "tags:online", "--tracks_destination", "D:/Games/ac-mods-archives/tracks", "--cars_destination", "D:/Games/ac-mods-archives/cars", 
+            //    "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
+            //   "--add_csp_tags","--dont_archive"
            // , "--override_archives",
             //"args":["--cars", "#all","--tracks", "#all", "--tracks_destination", "D:/Games/ac-mods-archives/tracks", "--cars_destination", "D:/Games/ac-mods-archives/cars", 
             //    "--track_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/tracks/", "--car_url_prefix", "http://cheztheo.net/lQ2uN4tU0vQ8rC1nV0mM3rZ1iW7cR1wX/cars/", 
             //   "--update_mod_url", "--skip_kunos_mods"
               // , "--override_archives", "--skip_kunos_mods"
             //]
-           // "args":["--guess", "D:\\Downloads\\mods-assetto-a-installer\\pschd_honda_integra_dc2_typer_19981.01hotfixed.7z"
-           //   "args":["--clean"
+            "args":["--guess", "E:\\Downloads\\mods-assetto\\Mercedes-Benz C180 W202 DTM 1995 by TJ v030919 for AC v1.16.3.7z"
+            //  "args":["--clean"
             // "args":["--find_tracks_by_tags", "online"
               // , "--override_archives", "--skip_kunos_mods"
             ]

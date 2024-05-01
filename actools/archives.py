@@ -1,5 +1,6 @@
 import glob, os
 import tempfile
+import stat
 from actools import common
 import shutil
 import ntpath
@@ -25,11 +26,10 @@ def findModName(finalModeDir, originalArchiveName, title = False):
         # we cannot find a descent archive name, return the original name
         return os.path.splitext(originalArchiveName)[0]
     if carsNumber > 0:
-        if carsNumber == 1:
-            if title:
-                return (cars.CarTools(None, None)).extractModArchiveTitle(os.path.join(carsDir, carslist[0]))
-            else:
-                return (cars.CarTools(None, None)).extractModArchiveName(os.path.join(carsDir, carslist[0]))
+        if title:
+            return (cars.CarTools(None, None)).extractModArchiveTitle(os.path.join(carsDir, carslist[0]))
+        else:
+            return (cars.CarTools(None, None)).extractModArchiveName(os.path.join(carsDir, carslist[0]))
 
     elif tracksNumber > 0:
         if tracksNumber == 1:
@@ -103,6 +103,10 @@ def archiveValidMod(params, newModDir, originalName):
         destArchive = os.path.join(os.environ["HOMEPATH"], "Desktop", finalArchiveName)
     common.zipFileToDir(params.sevenzipexec, newModDir, destArchive, None, params.forceOverride, None)
 
+def del_rw(action, name, exc):
+    os.chmod(name, stat.S_IWRITE)
+    os.remove(name)
+    os.unlink(name)
 
 def installMods(params, newModDir, originalName):
     soundModsFound = False
@@ -117,16 +121,21 @@ def installMods(params, newModDir, originalName):
         if(os.path.isdir(modInstallDir)):
             print('Replacing mod ' + finalModName + ' because it already exists in ' + params.acmodspath)
             if os.path.isdir(os.path.join(modInstallDir, "content")):
-                shutil.rmtree(os.path.join(modInstallDir, "content"))
+                shutil.rmtree(os.path.join(modInstallDir, "content"), onerror=del_rw)
             if os.path.isdir(os.path.join(modInstallDir, "extension")):
-                shutil.rmtree(os.path.join(modInstallDir, "extension"))
+                shutil.rmtree(os.path.join(modInstallDir, "extension"), onerror=del_rw)
             if os.path.isdir(os.path.join(modInstallDir, "system")):
-                shutil.rmtree(os.path.join(modInstallDir, "system"))
+                shutil.rmtree(os.path.join(modInstallDir, "system"), onerror=del_rw)
         os.makedirs(modInstallDir, exist_ok= True)
         # move all files into the install mod dir
         file_names = os.listdir(newModDir)
         for file_name in file_names:
-            shutil.move(os.path.join(newModDir, file_name), modInstallDir)
+            newfile = os.path.join(newModDir, file_name)
+            if newModDir[0] == modInstallDir[0]:
+                shutil.move(newfile, modInstallDir)
+            else:
+                common.copytree(newfile, modInstallDir)
+                #shutil.rmtree(newfile, onerror=del_rw)
 
 def transformToValidMod(params, archiveToProcess):
     if not archiveToProcess == None:
@@ -137,6 +146,7 @@ def transformToValidMod(params, archiveToProcess):
         return
     # create a tmp work dir and unzip the archive to process inside
     workdir = tempfile.mkdtemp()
+    print("Unzipping archive to " + workdir)
     common.unzipFileToDir(params.sevenzipexec, archiveToProcess, workdir)
     
     # create a dir where we will put the mod once it has the good structure
@@ -160,8 +170,8 @@ def recursiveMoveModsToValidModDir(workdir, newModDir, currentDirName):
     elif isCarSound(workdir):
         newSoundDir = os.path.join(newModDir, 'sound_' + currentDirName)
         appendMod(workdir, newSoundDir, 'SOUND')
-    elif isMod(workdir):
-        appendMod(workdir, newModDir, 'MOD')
+    #elif isMod(workdir):
+    #    appendMod(workdir, newModDir, 'MOD')
 
     #if not we try to find it in subdirs
     else:

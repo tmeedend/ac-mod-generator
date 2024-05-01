@@ -1,11 +1,9 @@
 
 import json
+import shutil
 import subprocess
 import os
 import glob 
-import time
-import re
-import fileinput
 from configparser import ConfigParser
 
 def cleanName(name, replaceSpacesByUnderscores):
@@ -17,9 +15,9 @@ def cleanName(name, replaceSpacesByUnderscores):
 
 def parseJson(jsonfilename):
 	try:
-		return json.loads(open(jsonfilename).read(), strict=False)
-	except:
 		return json.loads(open(jsonfilename, encoding='utf-8-sig').read(), strict=False)
+	except:
+		return json.loads(open(jsonfilename).read(), strict=False)
 
 def fileContainsWord(filePath, word):
 	try:
@@ -40,7 +38,10 @@ def getNewestFile(modPath):
 	return os.path.getmtime(latest_file)
 
 def unzipFileToDir(sevenzipexec, archiveFile, destination):
-	archiveCmd = sevenzipexec + ' x "' + archiveFile + '" -o"' + destination + '"'
+	if archiveFile.lower().endswith(".tgz") or archiveFile.lower().endswith(".tar.gz"):
+		archiveCmd = "tar -zxf " + archiveFile + " --directory " + destination
+	else:
+		archiveCmd = sevenzipexec + ' x "' + archiveFile + '" -o"' + destination + '"'
 	runCommand(archiveCmd)
 
 def readIniFile(iniFile):
@@ -100,3 +101,13 @@ def zipFileToDir(sevenzipexec, workingDirectory, archiveFile, listfilename, over
 		print("\tError while archiving mod") 
 	finally:
 		os.chdir(origWD) # get back to our original working directory 
+
+
+def copytree(src, dst, symlinks=False, ignore=None):
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            shutil.copytree(s, d, symlinks, ignore)
+        else:
+            shutil.copy2(s, d)
