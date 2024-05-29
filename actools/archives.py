@@ -1,3 +1,4 @@
+import json
 import glob, os
 import tempfile
 import stat
@@ -134,7 +135,9 @@ def installMods(params, newModDir, originalName):
             if newModDir[0] == modInstallDir[0]:
                 shutil.move(newfile, modInstallDir)
             else:
-                common.copytree(newfile, modInstallDir)
+                modInstallDirFileName = os.path.join(modInstallDir, file_name)
+                os.makedirs(modInstallDirFileName)
+                common.copytree(newfile, modInstallDirFileName)
                 #shutil.rmtree(newfile, onerror=del_rw)
 
 def transformToValidMod(params, archiveToProcess):
@@ -293,11 +296,11 @@ def fixCarTags(modDir, mo2categories):
 
     ###### fix class ######
     if modClass != 'race' and modClass != 'street':
-        if modClass == 'racing' or modClass == 'grand prix' or modClass == 'dpi' or modClass == 'group 6 gen 1' or modClass == 'group 5 gen 3' or modClass == 'group 5' or modClass == 'cup' or modClass == 'gt' or modClass == 'ac legends' or modClass == 'f2':
+        if modClass == 'racing' or modClass == 'grand prix' or modClass == 'dpi' or modClass == 'group 6 gen 1' or modClass == 'group 5 gen 3' or modClass == 'cup' or modClass == 'gt' or modClass == 'ac legends':
             modClass = 'race'
         elif modClass == 'drift' or  modClass == 'street drift' :
             modUpdatedTagsSet.add('#drift')
-        elif modClass == 'rally' or modClass == 'hillclimb' or modClass == 'pikespeak' or modClass == 'kit-car':
+        elif modClass == 'rally' or modClass == 'hillclimb' or modClass == 'pikespeak':
             modUpdatedTagsSet.add('#rally')
             modClass = 'race'
         elif modClass == 'stock' or modClass == 'tuning' or modClass == 'ev' or modClass == 'shutoko' or modClass == 'touge' or modClass == 'street/trackday' or modClass == 'tuned' or modClass == 'wangan':
@@ -305,6 +308,18 @@ def fixCarTags(modDir, mo2categories):
         elif modClass == 'rally gr4':
             modUpdatedTagsSet.add('#rally')
             modUpdatedTagsSet.add('group 4')
+        elif modClass == 'kitcar' or modClass == 'kit-car':
+            modClass = 'race'
+            modUpdatedTagsSet.add('#rally')
+            modUpdatedTagsSet.add('kitcar')
+        elif modClass == 'gra':
+            modClass = 'race'
+            modUpdatedTagsSet.add('#rally')
+            modUpdatedTagsSet.add('group a')
+        elif modClass == 'r5':
+            modClass = 'race'
+            modUpdatedTagsSet.add('#rally')
+            modUpdatedTagsSet.add('r5')
             modClass = 'race'
         elif modClass == 'tcr':
             modUpdatedTagsSet.add('#tcr')
@@ -315,16 +330,35 @@ def fixCarTags(modDir, mo2categories):
         elif modClass == 'gt500':
             modUpdatedTagsSet.add('#gt500')
             modClass = 'race'
-        elif modClass == 'dtm':
-            modUpdatedTagsSet.add('#dtm')
+        elif modClass == 'gt2':
+            modUpdatedTagsSet.add('#gt500')
+            modClass = 'race'
+        elif modClass == '#gt2':
+            modUpdatedTagsSet.add('#gt2')
+            modUpdatedTagsSet.add('endurance')
             modClass = 'race'
         elif modClass == 'group 5':
             modClass = 'race'
+            modUpdatedTagsSet.add('group 5')
+        elif modClass == 'f2':
+            modClass = 'race'
+            modUpdatedTagsSet.add("#formula 2")
+            modUpdatedTagsSet.add('openwheeler')
+            modUpdatedTagsSet.add('singleseater')
+        elif modClass == 'f1':
+            modClass = 'race'
+            modUpdatedTagsSet.add("#formula 1")
+            modUpdatedTagsSet.add('openwheeler')
+            modUpdatedTagsSet.add('singleseater')
         elif modClass == 'formula 3':
             modUpdatedTagsSet.add('#formula 3')
             modClass = 'race'
         elif modClass == 'prototype' or modClass == 'group c':
             modUpdatedTagsSet.add('prototype')
+            modClass = 'race'
+        elif modClass == 'lmp3':
+            modUpdatedTagsSet.add('prototype')
+            modUpdatedTagsSet.add('#lmp3')
             modClass = 'race'
         elif modClass == 'traffic':
             modUpdatedTagsSet.add('#traffic')
@@ -455,6 +489,9 @@ def fixCarTags(modDir, mo2categories):
             modUpdatedTagsSet.add('#btcc')
         if cat == 'Car - Rally':
             modUpdatedTagsSet.add('#rally')
+        if cat == 'Car - Rally Gravel':
+            modUpdatedTagsSet.add('#rally gravel')
+            modUpdatedTagsSet.add('rally gravel')
         elif cat == 'Car - Cup and Misc':
             modUpdatedTagsSet.add('cup')
         elif cat == 'Car - GT500':
